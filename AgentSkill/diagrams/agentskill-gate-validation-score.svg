@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 420" width="100%" height="100%"
+  style="background-color:#F8F9FA; font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+  <defs>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#000000" flood-opacity="0.04"/>
+    </filter>
+
+    <!-- Arrowheads: refX=10 avoids tip intruding into nodes; pair with endpoint padding -->
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#9CA3AF"/>
+    </marker>
+
+    <pattern id="dot-grid" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.5" fill="#E2E8F0"/>
+    </pattern>
+
+    <style>
+      .box-blue { fill: #E0F2FE; stroke: #BAE6FD; stroke-width: 2px; }
+      .box-rose { fill: #FCE8E6; stroke: #FECACA; stroke-width: 2px; }
+      .box-green { fill: #DCFCE7; stroke: #BBF7D0; stroke-width: 2px; }
+      .box-amber { fill: #FEF7E0; stroke: #FDE68A; stroke-width: 2px; }
+      .box-neutral { fill: #FFFFFF; stroke: #D1D5DB; stroke-width: 2px; }
+      .box-group { fill: rgba(255, 255, 255, 0.45); stroke: #CBD5E1; stroke-width: 2px; stroke-dasharray: 8 8; }
+      .diamond { fill: #FFFFFF; stroke: #D1D5DB; stroke-width: 2px; }
+
+      .text-title { font-size: 28px; font-weight: 800; fill: #111827; dominant-baseline: middle; letter-spacing: -0.5px; }
+      .text-subtitle { font-size: 14px; font-weight: 500; fill: #4B5563; dominant-baseline: middle; }
+      .text-main { font-size: 14px; font-weight: 600; fill: #1F2937; dominant-baseline: middle; letter-spacing: 0.2px; }
+      .text-small { font-size: 12px; font-weight: 500; fill: #6B7280; dominant-baseline: middle; }
+
+      .line { stroke: #9CA3AF; stroke-width: 1.5px; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    </style>
+  </defs>
+
+  <rect width="100%" height="100%" fill="url(#dot-grid)"/>
+
+  <!-- Title -->
+  <text x="80" y="70" class="text-title" text-anchor="start">门禁：验证 × 评分</text>
+  <text x="80" y="104" class="text-subtitle" text-anchor="start">优先级：验证失败永远先于评分；验证缺失必须提示风险并征询用户决策。</text>
+
+  <!-- Group -->
+  <rect x="60" y="140" width="1480" height="260" rx="24" class="box-group" filter="url(#shadow)"/>
+
+  <!-- ====================================================== -->
+  <!-- Edges (draw BEFORE nodes; endpoint padding EDGE_PAD=10) -->
+  <!-- ====================================================== -->
+  <g>
+    <!-- V(no) -> blocked -->
+    <path d="M 320 300 V 310" class="line" marker-end="url(#arrow)"/>
+    <text x="334" y="306" class="text-small" text-anchor="start">否</text>
+
+    <!-- V(yes) -> score -->
+    <path d="M 410 240 H 720" class="line" marker-end="url(#arrow)"/>
+    <text x="560" y="224" class="text-small" text-anchor="middle">是</text>
+
+    <!-- score(yes) -> pass -->
+    <path d="M 910 240 H 1070" class="line" marker-end="url(#arrow)"/>
+    <text x="990" y="224" class="text-small" text-anchor="middle">是</text>
+
+    <!-- score(no) -> needs decision -->
+    <path d="M 820 300 V 344 Q 820 356 832 356 H 1030" class="line" marker-end="url(#arrow)"/>
+    <text x="834" y="336" class="text-small" text-anchor="start">否</text>
+  </g>
+
+  <!-- Nodes (no overlaps) -->
+  <g>
+    <!-- Diamond 1: validation -->
+    <!-- center (320,240), size 180x120 -->
+    <polygon points="320,180 410,240 320,300 230,240" class="diamond" filter="url(#shadow)"/>
+    <text x="320" y="230" class="text-main" text-anchor="middle">验证通过？</text>
+    <text x="320" y="252" class="text-small" text-anchor="middle">evidence exists</text>
+
+    <!-- Diamond 2: score -->
+    <!-- center (820,240), size 180x120 -->
+    <polygon points="820,180 910,240 820,300 730,240" class="diamond" filter="url(#shadow)"/>
+    <text x="820" y="230" class="text-main" text-anchor="middle">总分 ≥ 7.0？</text>
+    <text x="820" y="252" class="text-small" text-anchor="middle">rubric score</text>
+
+    <!-- PASS -->
+    <rect x="1080" y="204" width="300" height="72" rx="18" class="box-green" filter="url(#shadow)"/>
+    <text x="1230" y="240" class="text-main" text-anchor="middle">PASS</text>
+
+    <!-- BLOCKED -->
+    <rect x="160" y="320" width="320" height="72" rx="18" class="box-rose" filter="url(#shadow)"/>
+    <text x="320" y="348" class="text-main" text-anchor="middle">BLOCKED</text>
+    <text x="320" y="370" class="text-small" text-anchor="middle">必须返工并复评</text>
+
+    <!-- NEEDS_USER_DECISION -->
+    <rect x="1040" y="320" width="380" height="72" rx="18" class="box-amber" filter="url(#shadow)"/>
+    <text x="1230" y="348" class="text-main" text-anchor="middle">NEEDS_USER_DECISION</text>
+    <text x="1230" y="370" class="text-small" text-anchor="middle">提示风险，由用户决定是否返工</text>
+  </g>
+</svg>

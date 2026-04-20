@@ -1,0 +1,347 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1400" width="100%" height="100%" style="background-color: #F8F9FA; font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+    <defs>
+        <!-- Modern Drop Shadow for Nodes -->
+        <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+            <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#000000" flood-opacity="0.04" />
+        </filter>
+
+        <!-- Standard Gray Arrowhead -->
+        <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#9CA3AF" />
+        </marker>
+
+        <!-- Highlight Pink Arrowhead -->
+        <marker id="arrow-hl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#F472B6" />
+        </marker>
+
+        <!-- Subtle Dot Grid Background for "Whiteboard Tech" feel -->
+        <pattern id="dot-grid" width="24" height="24" patternUnits="userSpaceOnUse">
+            <circle cx="2" cy="2" r="1.5" fill="#E2E8F0" />
+        </pattern>
+
+        <style>
+            /* Colors based on Modern Pastel Tech Style */
+            .box-data { fill: #E0F2FE; stroke: #BAE6FD; stroke-width: 2px; rx: 12px; ry: 12px; } /* Pastel Blue for Tensors/Data */
+            .box-layer { fill: #EBE0FF; stroke: #D8B4FE; stroke-width: 2px; rx: 12px; ry: 12px; } /* Pastel Purple for Neural Layers */
+            .box-op { fill: #DCFCE7; stroke: #BBF7D0; stroke-width: 2px; rx: 12px; ry: 12px; } /* Pastel Green for Math/Ops */
+            .box-math { fill: #FFFFFF; stroke: #D1D5DB; stroke-width: 2px; rx: 16px; ry: 16px; } /* White circle for basic math ops */
+            
+            .box-group { fill: rgba(255, 255, 255, 0.4); stroke: #CBD5E1; stroke-width: 2px; stroke-dasharray: 8 8; rx: 24px; ry: 24px; }
+            
+            /* Typography Hierarchy */
+            .text-title { font-size: 28px; font-weight: 800; fill: #111827; text-anchor: middle; dominant-baseline: middle; letter-spacing: -0.5px; }
+            .text-group { font-size: 18px; font-weight: 700; fill: #DB2777; dominant-baseline: middle; }
+            .text-main { font-size: 14px; font-weight: 600; fill: #1F2937; text-anchor: middle; dominant-baseline: middle; letter-spacing: 0.2px; }
+            .text-shape { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 11px; font-weight: 500; fill: #6B7280; text-anchor: middle; dominant-baseline: middle; }
+            .text-anno { font-size: 12px; font-weight: 500; fill: #4B5563; dominant-baseline: middle; }
+            
+            /* Lines */
+            .line-norm { stroke: #9CA3AF; stroke-width: 1.5px; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+            .line-hl { stroke: #F472B6; stroke-width: 2.5px; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+        </style>
+    </defs>
+
+    <!-- Background Grid -->
+    <rect width="100%" height="100%" fill="url(#dot-grid)" />
+
+    <!-- ========================================== -->
+    <!-- GROUP BOXES (Rendered first to be in back) -->
+    <!-- ========================================== -->
+    
+    <!-- DecoderBlocks x36 -->
+    <rect x="460" y="240" width="280" height="820" class="box-group" filter="url(#shadow)" />
+    <text x="600" y="220" class="text-group" text-anchor="middle">DecoderBlocks x36</text>
+    
+    <!-- Attention Block -->
+    <rect x="840" y="40" width="660" height="1260" class="box-group" filter="url(#shadow)" />
+    
+    <!-- MLP Block -->
+    <rect x="40" y="740" width="400" height="580" class="box-group" filter="url(#shadow)" />
+
+    <!-- Title -->
+    <text x="800" y="60" class="text-title">Qwen3 4B</text>
+
+    <!-- ========================================== -->
+    <!-- CONNECTIONS & ROUTING                      -->
+    <!-- ========================================== -->
+    <g>
+        <!-- Main Flow -->
+        <path d="M 240,100 L 240,120" class="line-norm" />
+        <path d="M 240,160 L 240,170 Q 240,180 220,180 L 180,180 Q 160,180 160,195" class="line-norm" marker-end="url(#arrow)" />
+        <path d="M 240,160 L 240,170 Q 240,180 260,180 L 300,180 Q 320,180 320,195" class="line-norm" marker-end="url(#arrow)" />
+        <path d="M 160,220 L 160,315" class="line-norm" marker-end="url(#arrow)" />
+        <path d="M 160,340 L 160,415" class="line-norm" marker-end="url(#arrow)" />
+        <path d="M 160,440 L 160,535" class="line-norm" marker-end="url(#arrow)" />
+        <path d="M 160,560 L 160,655" class="line-norm" marker-end="url(#arrow)" />
+
+        <!-- Inter-Module Highlight Arrows -->
+        <path d="M 230,420 L 380,420 Q 400,420 400,400 L 400,320 Q 400,300 420,300 L 525,300" class="line-hl" marker-end="url(#arrow-hl)" />
+        <path d="M 670,500 L 760,500 Q 780,500 780,480 L 780,120 Q 780,100 800,100 L 1025,100" class="line-hl" marker-end="url(#arrow-hl)" />
+        <path d="M 530,900 L 480,900 Q 460,900 460,880 L 460,800 Q 460,780 440,780 L 315,780" class="line-hl" marker-end="url(#arrow-hl)" />
+
+        <!-- DecoderBlocks internal -->
+        <path d="M 600,320 L 600,395" class="line-norm" marker-end="url(#arrow)" />
+        <path d="M 600,420 L 600,495" class="line-norm" marker-end="url(#arrow)" />
+        <path d="M 600,520 L 600,585" class="line-norm" marker-end="url(#arrow)" />
+        <path d="M 600,620 L 600,685" class="line-norm" marker-end="url(#arrow)" />
+        <path d="M 600,720 L 600,795" class="line-norm" marker-end="url(#arrow)" />
+        <path d="M 600,820 L 600,885" class="line-norm" marker-end="url(#arrow)" />
+        <path d="M 600,920 L 600,985" class="line-norm" marker-end="url(#arrow)" />
+        <!-- Residuals -->
+        <path d="M 600,360 L 690,360 Q 700,360 700,370 L 700,590 Q 700,600 690,600 L 620,600" class="line-norm" marker-end="url(#arrow)" />
+        <path d="M 600,760 L 690,760 Q 700,760 700,770 L 700,990 Q 700,1000 690,1000 L 620,1000" class="line-norm" marker-end="url(#arrow)" />
+
+        <!-- MLP Block internal -->
+        <path d="M 240,800 L 240,830" class="line-norm" />
+        <path d="M 240,830 Q 240,840 220,840 L 150,840 Q 130,840 130,850 L 130,875" class="line-norm" marker-end="url(#arrow)" />
+        <path d="M 240,830 Q 240,840 260,840 L 330,840 Q 350,840 350,850 L 350,875" class="line-norm" marker-end="url(#arrow)" />
+        <path d="M 130,900 L 130,975" class="line-norm" marker-end="url(#arrow)" />
+        <path d="M 130,1000 L 130,1060 Q 130,1080 150,1080 L 220,1080" class="line-norm" marker-end="url(#arrow)" />
+        <path d="M 350,900 L 350,1060 Q 350,1080 330,1080 L 260,1080" class="line-norm" marker-end="url(#arrow)" />
+        <path d="M 240,1096 L 240,1175" class="line-norm" marker-end="url(#arrow)" />
+        <path d="M 240,1200 L 240,1275" class="line-norm" marker-end="url(#arrow)" />
+
+        <!-- Attention Block internal -->
+        <path d="M 1100,120 L 1100,215" class="line-norm" marker-end="url(#arrow)" />
+        <path d="M 1100,140 Q 1100,150 1080,150 L 960,150 Q 940,150 940,160 L 940,215" class="line-norm" marker-end="url(#arrow)" />
+        <path d="M 1100,140 Q 1100,150 1120,150 L 1320,150 Q 1340,150 1340,160 L 1340,315" class="line-norm" marker-end="url(#arrow)" />
+        
+        <path d="M 940,240 L 940,315" class="line-norm" marker-end="url(#arrow)" />
+        <path d="M 1100,240 L 1100,315" class="line-norm" marker-end="url(#arrow)" />
+        
+        <path d="M 940,340 L 940,415" class="line-norm" marker-end="url(#arrow)" />
+        <path d="M 1100,340 L 1100,415" class="line-norm" marker-end="url(#arrow)" />
+        
+        <path d="M 940,440 L 940,515" class="line-norm" marker-end="url(#arrow)" />
+        <path d="M 1100,440 L 1100,515" class="line-norm" marker-end="url(#arrow)" />
+        
+        <path d="M 1100,540 L 1100,615" class="line-norm" marker-end="url(#arrow)" />
+        <path d="M 1340,340 L 1340,615" class="line-norm" marker-end="url(#arrow)" />
+        
+        <path d="M 1100,640 L 1100,715" class="line-norm" marker-end="url(#arrow)" />
+        <path d="M 1340,640 L 1340,715" class="line-norm" marker-end="url(#arrow)" />
+        
+        <path d="M 940,540 L 940,715" class="line-norm" marker-end="url(#arrow)" />
+        
+        <!-- Routes to attention_scores -->
+        <path d="M 940,740 L 940,815" class="line-norm" marker-end="url(#arrow)" />
+        <path d="M 1100,740 L 1100,815" class="line-norm" marker-end="url(#arrow)" />
+        
+        <path d="M 1020,840 L 1020,905" class="line-norm" marker-end="url(#arrow)" />
+        
+        <!-- Attention Mask Route -->
+        <path d="M 1420,120 L 1420,920 L 1040,920" class="line-norm" marker-end="url(#arrow)" />
+        
+        <path d="M 1020,936 L 1020,1015" class="line-norm" marker-end="url(#arrow)" />
+        
+        <!-- Routes to matmul -->
+        <path d="M 1020,1040 L 1020,1080 Q 1020,1090 1030,1090 L 1100,1090 Q 1110,1090 1110,1100" class="line-norm" marker-end="url(#arrow)" />
+        <path d="M 1340,740 L 1340,1080 Q 1340,1090 1330,1090 L 1260,1090 Q 1250,1090 1250,1100" class="line-norm" marker-end="url(#arrow)" />
+        
+        <path d="M 1180,1140 L 1180,1215" class="line-norm" marker-end="url(#arrow)" />
+        <path d="M 1180,1240 L 1180,1290" class="line-norm" marker-end="url(#arrow)" />
+    </g>
+
+    <!-- ========================================== -->
+    <!-- ANNOTATIONS & TEXT ON LINES                -->
+    <!-- ========================================== -->
+    <g>
+        <text x="240" y="140" class="text-main" style="fill:#4B5563;">Tokenizer</text>
+        <text x="160" y="140" class="text-anno" text-anchor="end">vocab_size=151936</text>
+        
+        <text x="175" y="270" class="text-anno" text-anchor="start">torch.nn.Embedding(inputs_ids)</text>
+        <rect x="25" y="260" width="125" height="20" fill="#FFFFFF" rx="4" filter="url(#shadow)" opacity="0.8"/>
+        <text x="145" y="270" class="text-anno" text-anchor="end">嵌入张量[151936, 2560]</text>
+        
+        <rect x="25" y="480" width="125" height="20" fill="#FFFFFF" rx="4" filter="url(#shadow)" opacity="0.8"/>
+        <text x="145" y="490" class="text-anno" text-anchor="end">只取最后一个token</text>
+        
+        <rect x="15" y="600" width="135" height="20" fill="#FFFFFF" rx="4" filter="url(#shadow)" opacity="0.8"/>
+        <text x="145" y="610" class="text-anno" text-anchor="end">共享嵌入张量[2560, 151936]</text>
+        
+        <text x="710" y="480" class="text-anno" text-anchor="start">residual</text>
+        <text x="710" y="880" class="text-anno" text-anchor="start">residual</text>
+        
+        <text x="1100" y="160" class="text-anno" text-anchor="middle">通过Linear拆分为Q,K,V</text>
+    </g>
+
+    <!-- ========================================== -->
+    <!-- NODES (Draw Boxes & Text)                  -->
+    <!-- ========================================== -->
+    <g>
+        <!-- Group 1: Main Flow -->
+        <text x="240" y="65" class="text-shape">(batch_size, seq_len)</text>
+        <rect x="170" y="80" width="140" height="40" class="box-data" filter="url(#shadow)" />
+        <text x="240" y="100" class="text-main">Text</text>
+
+        <text x="160" y="185" class="text-shape">(batch_size, seq_len)</text>
+        <rect x="90" y="200" width="140" height="40" class="box-data" filter="url(#shadow)" />
+        <text x="160" y="220" class="text-main">input_ids</text>
+
+        <text x="320" y="185" class="text-shape">(batch_size, seq_len)</text>
+        <rect x="250" y="200" width="140" height="40" class="box-data" filter="url(#shadow)" />
+        <text x="320" y="220" class="text-main">attention_ids</text>
+
+        <text x="160" y="305" class="text-shape">(batch_size, seq_len, 2560)</text>
+        <rect x="90" y="320" width="140" height="40" class="box-layer" filter="url(#shadow)" />
+        <text x="160" y="340" class="text-main">embedding</text>
+
+        <!-- Node with no shape -->
+        <rect x="90" y="420" width="140" height="40" class="box-layer" filter="url(#shadow)" />
+        <text x="160" y="440" class="text-main">model_blocks</text>
+
+        <text x="160" y="525" class="text-shape">(batch_size, 1, 2560)</text>
+        <rect x="90" y="540" width="140" height="40" class="box-op" filter="url(#shadow)" />
+        <text x="160" y="560" class="text-main">RSMNorm</text>
+
+        <text x="160" y="645" class="text-shape">(batch_size, 1, 151936)</text>
+        <rect x="90" y="660" width="140" height="40" class="box-layer" filter="url(#shadow)" />
+        <!-- Preserving original spelling 'Liner' as required -->
+        <text x="160" y="680" class="text-main">Liner</text>
+
+        <!-- Group 2: DecoderBlocks -->
+        <text x="600" y="285" class="text-shape">(batch_size, seq_len, 2560)</text>
+        <rect x="530" y="300" width="140" height="40" class="box-data" filter="url(#shadow)" />
+        <!-- Preserving original spelling 'hiden_states' -->
+        <text x="600" y="320" class="text-main">hiden_states</text>
+
+        <text x="600" y="385" class="text-shape">(batch_size, seq_len, 2560)</text>
+        <rect x="530" y="400" width="140" height="40" class="box-op" filter="url(#shadow)" />
+        <text x="600" y="420" class="text-main">RMSNorm</text>
+
+        <text x="600" y="485" class="text-shape">(batch_size, seq_len, 2560)</text>
+        <rect x="530" y="500" width="140" height="40" class="box-layer" filter="url(#shadow)" />
+        <text x="600" y="520" class="text-main">Attention</text>
+
+        <!-- Math (+) Node -->
+        <circle cx="600" cy="600" r="16" class="box-math" filter="url(#shadow)" />
+        <text x="600" y="600" class="text-main" style="font-size: 18px;">+</text>
+
+        <text x="600" y="685" class="text-shape">(batch_size, seq_len, 2560)</text>
+        <rect x="530" y="700" width="140" height="40" class="box-data" filter="url(#shadow)" />
+        <text x="600" y="720" class="text-main">hidden_states</text>
+
+        <text x="600" y="785" class="text-shape">(batch_size, seq_len, 2560)</text>
+        <rect x="530" y="800" width="140" height="40" class="box-op" filter="url(#shadow)" />
+        <text x="600" y="820" class="text-main">RMSNorm</text>
+
+        <text x="600" y="885" class="text-shape">(batch_size, seq_len, 2560)</text>
+        <rect x="530" y="900" width="140" height="40" class="box-layer" filter="url(#shadow)" />
+        <text x="600" y="920" class="text-main">MLP</text>
+
+        <circle cx="600" cy="1000" r="16" class="box-math" filter="url(#shadow)" />
+        <text x="600" y="1000" class="text-main" style="font-size: 18px;">+</text>
+
+        <!-- Group 3: Attention Block -->
+        <text x="1100" y="85" class="text-shape">(batch_size, seq_len, 2560)</text>
+        <rect x="1030" y="100" width="140" height="40" class="box-data" filter="url(#shadow)" />
+        <text x="1100" y="120" class="text-main">hidden_states</text>
+
+        <text x="1420" y="85" class="text-shape">(1, 1, seq_len, seq_len)</text>
+        <rect x="1350" y="100" width="140" height="40" class="box-data" filter="url(#shadow)" />
+        <text x="1420" y="120" class="text-main">attention_mask</text>
+
+        <!-- Row: Q, K -->
+        <text x="940" y="205" class="text-shape">(batch_size, 32, seq_len, 128)</text>
+        <rect x="870" y="220" width="140" height="40" class="box-data" filter="url(#shadow)" />
+        <text x="940" y="240" class="text-main">query</text>
+
+        <text x="1100" y="205" class="text-shape">(batch_size, 8, seq_len, 128)</text>
+        <rect x="1030" y="220" width="140" height="40" class="box-data" filter="url(#shadow)" />
+        <text x="1100" y="240" class="text-main">key</text>
+
+        <!-- Row: V -->
+        <text x="1340" y="305" class="text-shape">(batch_size, seq_len, 8, 128)</text>
+        <rect x="1270" y="320" width="140" height="40" class="box-data" filter="url(#shadow)" />
+        <text x="1340" y="340" class="text-main">value</text>
+
+        <!-- Row: RMSNorm x2 -->
+        <rect x="870" y="320" width="140" height="40" class="box-op" filter="url(#shadow)" />
+        <text x="940" y="340" class="text-main">RMSNorm</text>
+
+        <rect x="1030" y="320" width="140" height="40" class="box-op" filter="url(#shadow)" />
+        <text x="1100" y="340" class="text-main">RMSNorm</text>
+
+        <!-- Apply Rotary (Wide) -->
+        <rect x="870" y="420" width="300" height="40" class="box-op" filter="url(#shadow)" />
+        <text x="1020" y="440" class="text-main">apply_rotary_emb</text>
+
+        <!-- Row: Q, K after rotary -->
+        <text x="940" y="505" class="text-shape">(batch_size, 32, seq_len, 128)</text>
+        <rect x="870" y="520" width="140" height="40" class="box-data" filter="url(#shadow)" />
+        <text x="940" y="540" class="text-main">query</text>
+
+        <text x="1100" y="505" class="text-shape">(batch_size, 8, seq_len, 128)</text>
+        <rect x="1030" y="520" width="140" height="40" class="box-data" filter="url(#shadow)" />
+        <text x="1100" y="540" class="text-main">key</text>
+
+        <!-- Repeat KV (Wide) -->
+        <rect x="1030" y="620" width="380" height="40" class="box-op" filter="url(#shadow)" />
+        <text x="1220" y="640" class="text-main">repeat_kv</text>
+
+        <!-- Row: Q, K, V bottom -->
+        <text x="940" y="705" class="text-shape">(batch_size, 32, seq_len, 128)</text>
+        <rect x="870" y="720" width="140" height="40" class="box-data" filter="url(#shadow)" />
+        <text x="940" y="740" class="text-main">query</text>
+
+        <text x="1100" y="705" class="text-shape">(batch_size, 32, seq_len, 128)</text>
+        <rect x="1030" y="720" width="140" height="40" class="box-data" filter="url(#shadow)" />
+        <text x="1100" y="740" class="text-main">key</text>
+
+        <text x="1340" y="705" class="text-shape">(batch_size, 32, seq_len, 128)</text>
+        <rect x="1270" y="720" width="140" height="40" class="box-data" filter="url(#shadow)" />
+        <text x="1340" y="740" class="text-main">value</text>
+
+        <!-- Attention Scores -->
+        <text x="1020" y="805" class="text-shape">(batch_size, 32, seq_len, seq_len)</text>
+        <rect x="880" y="820" width="280" height="40" class="box-op" filter="url(#shadow)" />
+        <text x="1020" y="840" class="text-main">attention_scores</text>
+
+        <circle cx="1020" cy="920" r="16" class="box-math" filter="url(#shadow)" />
+        <text x="1020" y="920" class="text-main" style="font-size: 18px;">+</text>
+
+        <text x="1020" y="1005" class="text-shape">(batch_size, 32, seq_len, seq_len)</text>
+        <rect x="950" y="1020" width="140" height="40" class="box-op" filter="url(#shadow)" />
+        <text x="1020" y="1040" class="text-main">softmax</text>
+
+        <!-- Matmul -->
+        <text x="1180" y="1105" class="text-shape">(batch_size, 32, seq_len, 128)</text>
+        <rect x="1100" y="1120" width="160" height="40" class="box-op" filter="url(#shadow)" />
+        <text x="1180" y="1140" class="text-main">matmul</text>
+
+        <!-- Linear -->
+        <text x="1180" y="1205" class="text-shape">(batch_size, seq_len, 2560)</text>
+        <rect x="1110" y="1220" width="140" height="40" class="box-layer" filter="url(#shadow)" />
+        <text x="1180" y="1240" class="text-main">Linear</text>
+
+        <!-- Group 4: MLP Block -->
+        <text x="240" y="765" class="text-shape">(batch_size, seq_len, 2560)</text>
+        <rect x="170" y="780" width="140" height="40" class="box-data" filter="url(#shadow)" />
+        <text x="240" y="800" class="text-main">hidden_states</text>
+
+        <text x="130" y="865" class="text-shape">(batch_size, seq_len, 9728)</text>
+        <rect x="60" y="880" width="140" height="40" class="box-layer" filter="url(#shadow)" />
+        <text x="130" y="900" class="text-main">Linear</text>
+
+        <text x="350" y="865" class="text-shape">(batch_size, seq_len, 9728)</text>
+        <rect x="280" y="880" width="140" height="40" class="box-layer" filter="url(#shadow)" />
+        <text x="350" y="900" class="text-main">Linear</text>
+
+        <text x="130" y="965" class="text-shape">(batch_size, seq_len, 9728)</text>
+        <rect x="60" y="980" width="140" height="40" class="box-op" filter="url(#shadow)" />
+        <text x="130" y="1000" class="text-main">SiLU</text>
+
+        <circle cx="240" cy="1080" r="16" class="box-math" filter="url(#shadow)" />
+        <text x="240" y="1080" class="text-main" style="font-size: 16px;">⊗</text>
+
+        <text x="240" y="1165" class="text-shape">(batch_size, seq_len, 2560)</text>
+        <rect x="170" y="1180" width="140" height="40" class="box-layer" filter="url(#shadow)" />
+        <text x="240" y="1200" class="text-main">Linear</text>
+
+        <text x="240" y="1265" class="text-shape">(batch_size, seq_len, 2560)</text>
+        <rect x="170" y="1280" width="140" height="40" class="box-data" filter="url(#shadow)" />
+        <text x="240" y="1300" class="text-main">hidden_states</text>
+    </g>
+
+</svg>

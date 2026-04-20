@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 960" width="100%" height="100%"
+  style="background-color:#F8F9FA; font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+  <defs>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#000000" flood-opacity="0.04"/>
+    </filter>
+    <!-- Arrowheads: refX=10 avoids tip intruding into nodes; pair with endpoint padding -->
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#9CA3AF"/>
+    </marker>
+    <pattern id="dot-grid" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.5" fill="#E2E8F0"/>
+    </pattern>
+    <style>
+      .box-amber { fill: #FEF7E0; stroke: #FDE68A; stroke-width: 2px; }
+      .box-purple { fill: #EBE0FF; stroke: #D8B4FE; stroke-width: 2px; }
+      .box-blue { fill: #E0F2FE; stroke: #BAE6FD; stroke-width: 2px; }
+      .box-rose { fill: #FCE8E6; stroke: #FECACA; stroke-width: 2px; }
+      .box-green { fill: #DCFCE7; stroke: #BBF7D0; stroke-width: 2px; }
+      .box-group { fill: rgba(255, 255, 255, 0.45); stroke: #CBD5E1; stroke-width: 2px; stroke-dasharray: 8 8; }
+      .diamond { fill: #FFFFFF; stroke: #D1D5DB; stroke-width: 2px; }
+
+      .text-title { font-size: 28px; font-weight: 800; fill: #111827; dominant-baseline: middle; letter-spacing: -0.5px; }
+      .text-subtitle { font-size: 14px; font-weight: 500; fill: #4B5563; dominant-baseline: middle; }
+      .text-main { font-size: 14px; font-weight: 600; fill: #1F2937; dominant-baseline: middle; letter-spacing: 0.2px; }
+      .text-small { font-size: 12px; font-weight: 500; fill: #6B7280; dominant-baseline: middle; }
+
+      .line { stroke: #9CA3AF; stroke-width: 1.5px; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    </style>
+  </defs>
+
+  <rect width="100%" height="100%" fill="url(#dot-grid)"/>
+
+  <text x="80" y="70" class="text-title" text-anchor="start">迷你演练：科研（方向模糊 → 可验证 idea）</text>
+  <text x="80" y="104" class="text-subtitle" text-anchor="start">Router → Research → Brainstorm → Plan → 执行授权 → Execute → Validate → Review</text>
+
+  <rect x="60" y="140" width="1480" height="780" rx="24" class="box-group" filter="url(#shadow)"/>
+
+  <!-- ====================================================== -->
+  <!-- Edges (draw BEFORE nodes; endpoint padding EDGE_PAD=10) -->
+  <!-- ====================================================== -->
+  <g>
+    <path d="M 800 262 V 284" class="line" marker-end="url(#arrow)"/>
+    <path d="M 800 366 V 388" class="line" marker-end="url(#arrow)"/>
+    <path d="M 800 470 V 492" class="line" marker-end="url(#arrow)"/>
+    <path d="M 800 574 V 584" class="line" marker-end="url(#arrow)"/>
+    <path d="M 800 644 V 660" class="line" marker-end="url(#arrow)"/>
+    <path d="M 800 742 V 764" class="line" marker-end="url(#arrow)"/>
+    <path d="M 800 846 V 868" class="line" marker-end="url(#arrow)"/>
+  </g>
+
+  <!-- Nodes (w=320,h=72, gap=32, x=640) -->
+  <g>
+    <rect x="640" y="190" width="320" height="72" rx="18" class="box-amber" filter="url(#shadow)"/>
+    <text x="800" y="226" class="text-main" text-anchor="middle">Router</text>
+    <text x="800" y="248" class="text-small" text-anchor="middle">Research + L2/L3</text>
+
+    <rect x="640" y="294" width="320" height="72" rx="18" class="box-blue" filter="url(#shadow)"/>
+    <text x="800" y="330" class="text-main" text-anchor="middle">Research</text>
+    <text x="800" y="352" class="text-small" text-anchor="middle">找基线/指标/相关工作</text>
+
+    <rect x="640" y="398" width="320" height="72" rx="18" class="box-purple" filter="url(#shadow)"/>
+    <text x="800" y="434" class="text-main" text-anchor="middle">Brainstorm</text>
+    <text x="800" y="456" class="text-small" text-anchor="middle">2–3 条路线 + 推荐</text>
+
+    <rect x="640" y="502" width="320" height="72" rx="18" class="box-blue" filter="url(#shadow)"/>
+    <text x="800" y="538" class="text-main" text-anchor="middle">Plan</text>
+    <text x="800" y="560" class="text-small" text-anchor="middle">MVE + 验收标准</text>
+
+    <polygon points="800,594 840,614 800,634 760,614" class="diamond" filter="url(#shadow)"/>
+    <text x="800" y="610" class="text-small" text-anchor="middle">执行授权</text>
+    <text x="800" y="628" class="text-small" text-anchor="middle">开始执行?</text>
+
+    <rect x="640" y="670" width="320" height="72" rx="18" class="box-rose" filter="url(#shadow)"/>
+    <text x="800" y="706" class="text-main" text-anchor="middle">Execute</text>
+    <text x="800" y="728" class="text-small" text-anchor="middle">跑最小实验</text>
+
+    <rect x="640" y="774" width="320" height="72" rx="18" class="box-green" filter="url(#shadow)"/>
+    <text x="800" y="810" class="text-main" text-anchor="middle">Validate</text>
+    <text x="800" y="832" class="text-small" text-anchor="middle">环境/seed/参数/结果</text>
+
+    <rect x="640" y="878" width="320" height="72" rx="18" class="box-blue" filter="url(#shadow)"/>
+    <text x="800" y="914" class="text-main" text-anchor="middle">Review</text>
+    <text x="800" y="936" class="text-small" text-anchor="middle">打分 + P0/P1/P2</text>
+  </g>
+</svg>
