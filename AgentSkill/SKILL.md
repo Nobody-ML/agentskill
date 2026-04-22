@@ -26,7 +26,20 @@ metadata:
 ```text
 AgentSkill/
 ├── SKILL.md
+├── CHANGELOG.md
 ├── State.md
+├── protocols/
+│   ├── 00-hard-gates.md
+│   ├── 01-plan-mode-and-deep-plan.md
+│   ├── 02-deep-reading-and-research.md
+│   ├── 03-execution-preflight.md
+│   ├── 04-validation-real-data-first.md
+│   ├── 05-resumption-and-anti-drift.md
+│   ├── 06-delivery-and-review.md
+│   ├── 07-fallback-and-boundaries.md
+│   ├── 08-long-running-ops.md
+│   ├── 09-output-contracts.md
+│   └── 10-gotchas.md
 ├── stages/
 │   ├── router/SKILL.md
 │   ├── brainstorm/SKILL.md
@@ -42,22 +55,68 @@ AgentSkill/
 ├── examples/
 │   ├── _index.md
 │   └── */
-└── templates/
+├── templates/
     ├── State.template.md
     ├── Plan.template.md
+    ├── Plan.deep.template.md
     ├── Task.template.md
+    ├── Task.deep.template.md
+    ├── ResearchLog.template.md
+    ├── DecisionLog.template.md
     ├── AcceptanceContract.template.md
+    ├── ValidationMatrix.template.md
+    ├── TestReport.template.md
+    ├── ReviewReport.template.md
+    ├── PlanQualityGate.template.md
+    ├── ExecutionPreflight.template.md
+    ├── ResumptionBlock.template.md
+    ├── ChangeControl.template.md
+    ├── FallbackRegister.template.md
+    ├── DeliveryReport.template.md
+    ├── FinalReport.template.md
+    ├── ADR.template.md
+    ├── Ops-Runbook.template.md
+    ├── Paper-Outline.template.md
+    ├── Literature-Review-Matrix.template.md
+    ├── Stakeholders-Concerns.template.md
+    ├── Quality-Attributes.template.md
     ├── ReproProtocol-Research.template.md
     ├── ReproProtocol-Software.template.md
     ├── ReproProtocol-Writing.template.md
     ├── ReviewRubric-Research.template.md
     ├── ReviewRubric-Software.template.md
     └── ReviewRubric-Writing.template.md
+└── scripts/
+    ├── scan_forbidden_phrases.py
+    ├── validate_plan_task_quality.py
+    └── validate_workflow_state.py
 ```
 
 > 规则：除 Router 外，不要一次性阅读所有 stages；只读“下一步需要的那一个”。
 
 ---
+
+## 1.1 协议加载地图（渐进式披露）
+
+目的：把“该读什么”写成固定路由，避免大任务跑着跑着忘了加载关键门禁。
+
+| 场景/阶段 | 必读 | 常用模板/脚本 |
+|---|---|---|
+| 每轮启动 / 上下文压缩恢复 | `protocols/00-hard-gates.md`（G0/G9） + `protocols/05-resumption-and-anti-drift.md` + `protocols/10-gotchas.md` | `templates/ResumptionBlock.template.md` |
+| Plan Mode（L2/L3） | `protocols/01-plan-mode-and-deep-plan.md` + `protocols/02-deep-reading-and-research.md` + `protocols/07-fallback-and-boundaries.md` | `templates/PlanQualityGate.template.md`、`templates/ValidationMatrix.template.md` |
+| 深计划质量（L3 默认强制） | `library/plan-quality-standard.md` + `library/task-decomposition-standard.md` | `scripts/validate_plan_task_quality.py` |
+| Research（检索与证据） | `protocols/02-deep-reading-and-research.md` + `library/research-and-evidence-standard.md` | `templates/ResearchLog.template.md` |
+| Software（通用工程模型） | `library/software-engineering-operating-model.md` + `library/task-decomposition-standard.md` | `templates/ExecutionPreflight.template.md` |
+| Writing（文档质量） | `library/documentation-quality-standard.md` + `library/documentation-writing.md` | `templates/TestReport.template.md`（可选） |
+| 格式外科（PDF/排版/交互保持） | `library/format-surgery-systems.md`（通用） + `library/pdf-layout-translation-playbook.md`（PDF 专用） | `templates/Plan.deep.template.md`、`templates/Task.deep.template.md`、`templates/ExecutionPreflight.template.md` |
+| Execute（授权后） | `protocols/03-execution-preflight.md` + `protocols/07-fallback-and-boundaries.md` | `templates/ExecutionPreflight.template.md` |
+| Validate | `protocols/04-validation-real-data-first.md` | `templates/ValidationMatrix.template.md` |
+| Review / Delivery | `protocols/06-delivery-and-review.md` | `templates/DeliveryReport.template.md` |
+| Ops / Debug / 训练监控 | `protocols/08-long-running-ops.md` + `library/long-run-agent-operations.md` | `templates/Ops-Runbook.template.md` |
+| 输出格式（固定回执） | `protocols/09-output-contracts.md` | `scripts/scan_forbidden_phrases.py`（可选自检） |
+
+说明：
+- 这张表是“默认加载地图”。具体任务可以减少阅读量，但不得绕过门禁。
 
 ## 2. 全局硬约束（写在最前面）
 
@@ -188,7 +247,7 @@ Plan Mode 禁止的动作（不可做）：
 - 任何破坏性操作（删除、覆盖、迁移）与不可逆行为
 
 Execution Mode 的规则（授权后必须做到）：
-- **按 Task 一次性推进到完成**：不在中途反复要求用户做选择；只有“阻塞/风险授权/范围变更”才停下。
+- **按 Plan 与 Task 一次性推进到完成**：不在中途反复要求用户做选择；只有“阻塞/风险授权/范围变更”才停下。
 - **按“任务组→验证检查点”的节奏推进**：
   - Task.md 的小任务必须归入清晰的“大标题/任务组”（例如按组件/里程碑分组）。
   - 在同一任务组内可以连续完成多个小任务；当到达该组的 **Validate Checkpoint** 时再统一验证并落盘证据。

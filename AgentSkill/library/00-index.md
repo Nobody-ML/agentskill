@@ -5,6 +5,7 @@
 本目录是**可复用清单库**：
 - library 负责“清单与门禁”
 - stages 负责“触发条件与工件契约”（不要在 stages 里堆长清单）
+ - protocols 负责“硬门禁与状态机协议”（见 `AgentSkill/protocols/*`）
 
 ---
 
@@ -18,6 +19,20 @@
 
 ## library 文件一览
 
+- `plan-quality-standard.md`
+  - 深计划质量标准（反敷衍门禁、Pipeline Stages 密度、评分建议）
+- `task-decomposition-standard.md`
+  - Task 拆分标准（Task Group、验证节奏、风险驱动提前验证）
+- `research-and-evidence-standard.md`
+  - 调研与证据标准（来源优先级、Research Log、Evidence Index）
+- `validation-real-data-first.md`
+  - 真实数据优先验证清单（数据获取优先级、synthetic 门禁、证据最小集）
+- `software-engineering-operating-model.md`
+  - 通用工程作战模型（Build/Debug/Ops、Spec→实现→验证→交付）
+- `documentation-quality-standard.md`
+  - 文档交付质量标准（结构、图示、无机械口吻、验证与评分）
+- `long-run-agent-operations.md`
+  - 长任务续跑与 Ops 作战手册（workdir、checkpoint、监控循环、压缩恢复）
 - `requirements-acceptance.md`
   - 需求分类、验收标准、验收契约（可测试断言）
 - `architecture-tradeoffs.md`
@@ -46,6 +61,10 @@
   - 里程碑/依赖/风险矩阵/验收契约的组织与更新时机
 - `traceability.md`
   - 用户诉求 → stage/template/工件 的追溯表（用于审计“一条需求落到了哪里”）
+- `format-surgery-systems.md`
+  - 格式外科/保结构改写的通用流水线（阶段→技术→验证），用于防止 Plan/技术栈敷衍
+- `pdf-layout-translation-playbook.md`
+  - PDF 保排版翻译/功能保持的 playbook（用于写深 Plan 与验证方案）
 
 ---
 
@@ -56,11 +75,12 @@
 | Router | 复杂度不确定/风险信号/要不要上 L3 治理 | `risk-security.md`, `project-governance.md` |
 | Brainstorm | 方案对比、架构取舍、可验证性不足 | `architecture-tradeoffs.md`, `iteration-feedback.md` |
 | Research | 要找基线/指标/相关工作/证据链 | `iteration-feedback.md`, `reproducibility.md` |
-| Plan | 写验收、拆里程碑、定义验证与复现、对齐与收敛 | `plan-mode-interaction.md`, `requirements-acceptance.md`, `architecture-tradeoffs.md`, `project-governance.md`, `testing-verification.md` |
-| Execute | 设计/实现细化、控制复杂度与耦合、选择合适范式 | `development-paradigms.md`, `design-construction.md`, `complexity-modularity.md`, `iteration-feedback.md`, `testing-verification.md` |
-| Validate | 需要证据门禁与验证矩阵 | `testing-verification.md`, `reproducibility.md` |
-| Review | 按证据打分、决定返工 | `testing-verification.md`, `quality-operations-maintenance.md`, `project-governance.md` |
-| Write | 要写结构/图示/引用/可运行示例 | `documentation-writing.md`, `reproducibility.md` |
+| Plan | 写验收、拆里程碑、定义验证与复现、对齐与收敛 | `plan-quality-standard.md`, `task-decomposition-standard.md`, `plan-mode-interaction.md`, `requirements-acceptance.md`, `architecture-tradeoffs.md`, `project-governance.md`, `testing-verification.md` |
+| Execute | 设计/实现细化、控制复杂度与耦合、选择合适范式 | `software-engineering-operating-model.md`, `task-decomposition-standard.md`, `development-paradigms.md`, `design-construction.md`, `complexity-modularity.md`, `iteration-feedback.md`, `testing-verification.md` |
+| Validate | 需要证据门禁与验证矩阵 | `validation-real-data-first.md`, `testing-verification.md`, `reproducibility.md` |
+| Review | 按证据打分、决定返工 | `plan-quality-standard.md`, `testing-verification.md`, `quality-operations-maintenance.md`, `project-governance.md` |
+| Write | 要写结构/图示/引用/可运行示例 | `documentation-quality-standard.md`, `documentation-writing.md`, `reproducibility.md` |
+| Ops | 跑任务/监控/排障/训练盯盘 | `long-run-agent-operations.md`, `quality-operations-maintenance.md` |
 
 ---
 

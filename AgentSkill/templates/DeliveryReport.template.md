@@ -1,6 +1,9 @@
-# Delivery Report：<任务/项目名称>
+> 重要说明：本模板仅用于展示结构，不代表实际输出的最低详细程度。  
+> 实际输出必须依据当前任务的 Level、用户需求、Skill 规则、Plan Quality Gate、Validation Matrix 和 Acceptance Contract 生成。  
+> 大型任务不得因为模板简短而简化 Plan、Task、验证或交付。  
+> 字段可以扩展，不得擅自删除与用户需求相关字段。
 
-> 注意：本模板仅提供参考结构，不是执行规范；实际输出必须遵循本 skill 的 `SKILL.md` 与对应阶段的 `stages/*/SKILL.md`。模板与规则冲突时，以规则为准。
+# Delivery Report：<任务/项目名称>
 
 版本：`vX.Y.Z`（或日期）  
 Track：Research / Software / Writing / Simple  
@@ -11,31 +14,33 @@ Level：L0 / L1 / L2 / L3
 
 ---
 
-## 1. 摘要（What changed）
+## 1. What Was Done（做了什么）
 
 用 3–8 条描述“做了什么”，每条都应能映射到 Task 或验收标准：
 - 
 
 ---
 
-## 2. 交付物清单（Deliverables）
-
-- 文件/目录：
-- 文档：
-- 运行/实验产物（如有）：
-
----
-
-## 3. 变更清单（Key Changes）
+## 2. Files Changed（改了哪些文件）
 
 > 只列关键文件与关键改动点；避免堆所有细节。
 
-- `path/to/file`：变化一句话
-- `path/to/doc`：变化一句话
+- `path/to/file`：一句话变化
+
+（可选）新增/更新文档：
+- `path/to/doc`：一句话变化
 
 ---
 
-## 4. 验证与证据（Validation & Evidence）
+## 3. Acceptance Criteria Result（验收条目结果）
+
+> 对照 Acceptance Contract / Plan 的验收标准逐条给结论。
+
+- AC-001: pass/fail/blocked/partial/missing（证据入口）
+
+---
+
+## 4. Validation Summary（验证摘要）
 
 ### 4.0 过程合规（Process Compliance）
 
@@ -63,9 +68,14 @@ Level：L0 / L1 / L2 / L3
 
 - `State.md#Evidence Index`：条目名称/关键索引
 
+## 5. Review Score（评审打分）
+
+- 总分：X.X/10
+- 维度分：<按 rubric 列出>
+
 ---
 
-## 5. 风险、限制与未完成项（Risks & Limits）
+## 6. Residual Risks（剩余风险）
 
 > 只写事实与后果，不写情绪化措辞。
 
@@ -73,9 +83,22 @@ Level：L0 / L1 / L2 / L3
 
 ---
 
-## 6. 返工/后续（Next）
+## 7. Limits（限制）
 
-> 不发散；最多 1–3 条，按优先级给出可执行动作。
+- 
+
+---
+
+## 8. Resumption Block（可续跑块）
+
+（建议贴入 YAML；格式参考：`templates/ResumptionBlock.template.md`）
+
+---
+
+## 9. Final Statement（最终结论）
+
+- 结论：PASS / NEEDS_USER_DECISION / BLOCKED
+- 下一步（最多 1–3 条，按优先级）：
 
 - P0：
 - P1：

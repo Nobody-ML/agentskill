@@ -42,6 +42,16 @@ description: 把复杂任务写成可执行 Plan/Task：明确验收、里程碑
 
 ---
 
+## 必读协议（L2/L3 强制加载）
+
+- 门禁状态机：`protocols/00-hard-gates.md`（G1/G2/G3/G4/G5）
+- Plan Mode 与 Deep Plan：`protocols/01-plan-mode-and-deep-plan.md`
+- 深读与调研：`protocols/02-deep-reading-and-research.md`
+- 兜底与边界：`protocols/07-fallback-and-boundaries.md`
+- 长程恢复（上下文压缩/漂移）：`protocols/05-resumption-and-anti-drift.md`
+
+---
+
 ## 输出（必须产出）
 
 （L2/L3 强制）每轮对外回复开头必须带：
@@ -50,8 +60,12 @@ description: 把复杂任务写成可执行 Plan/Task：明确验收、里程碑
 【Mode】Plan | Level=<L?> | ExecutionAuth=<required/received/not_required>
 ```
 
-1) `Plan.md`（使用 `templates/Plan.template.md`）
-2) `Task.md`（使用 `templates/Task.template.md`，带方框）
+1) `Plan.md`
+   - L2 默认：`templates/Plan.template.md`
+   - L3 强制：`templates/Plan.deep.template.md`
+2) `Task.md`
+   - L2 默认：`templates/Task.template.md`
+   - L3 强制：`templates/Task.deep.template.md`
 3) 更新 `State.md`：写入 Track/Level、关键约束、Decision Log、Progress、Evidence 入口
 
 （L2/L3 的 Plan 最低内容门禁）
@@ -61,10 +75,15 @@ description: 把复杂任务写成可执行 Plan/Task：明确验收、里程碑
 - 必须包含可执行规范（Spec：接口/错误语义/示例/不变量）
 - 必须包含验证数据与节奏映射（real/sanitized-real 优先；checkpoint/milestone/final）
 - 必须包含“用户意图锁定”（Goal/Non-goals/Non-negotiables + 已确认决策快照），并同步到 State.md（防止执行阶段跑偏）
+- （L3 建议强制）必须包含：
+  - Validation Matrix（`templates/ValidationMatrix.template.md`）
+  - Plan Quality Gate 自检（`templates/PlanQualityGate.template.md`）
+  - Resumption Block（`templates/ResumptionBlock.template.md`）
+  - Fallback Register（默认空；需要时用 `templates/FallbackRegister.template.md`）
 
 （防敷衍的最低计数门槛，除非明确标注 N/A 与原因）
 - L2：Read Log ≥ 5 条；Research Log ≥ 5 条（当存在选型/用库/对标/“最新”需求时强制）
-- L3：Read Log ≥ 10 条；Research Log ≥ 8 条（至少包含 2 条官方文档/标准/论文；来源需可追溯）
+- L3：Read Log ≥ 10 条；Research Log ≥ 8 条（至少包含 2 条官方文档/标准/论文；至少包含 5 条可追溯 URL；来源需可追溯）
 
 ---
 
@@ -78,6 +97,28 @@ description: 把复杂任务写成可执行 Plan/Task：明确验收、里程碑
 （L3 门禁）
 - **没有验收契约（Acceptance Contract）不进入 Execute**。
 - 验收契约必须可追踪（AC-XXX），并能映射到 Task。
+
+---
+
+## 外科手术型任务加固（格式/交互/排版保持，默认 L3）
+
+当任务命中以下任一信号：
+- 需要在不破坏原有结构/功能的前提下改写产物（PDF/Office/富文本/渲染产物）
+- 需要保留链接/目录/书签/注释/表单/命名目标/元数据
+- 需要字体/坐标/排版 fit/视觉 QA
+
+Plan 的硬要求（否则视为 Plan 不就绪，禁止请求执行授权）：
+1) **强制升级为 L3**（Router 若判为 L2 也要在 Plan 中纠正并说明原因）。
+2) **必须使用深模板**：
+   - `templates/Plan.deep.template.md`
+   - `templates/Task.deep.template.md`
+3) **必须加载 playbooks 并写入 Plan**：
+   - 通用：`library/format-surgery-systems.md`
+   - PDF：`library/pdf-layout-translation-playbook.md`
+4) **必须写“阶段流水线 + 阶段→技术→验证映射”**（至少一张表）。
+5) **必须写 QA Plan**（渲染/几何/功能/多渲染器按需）并定义证据产物与失败判据。
+6) **必须写 Workdir & Resume Strategy**（断点续跑、失败隔离、报告结构）。
+7) **必须联网检索并落盘来源**（除非用户明确禁止联网）：至少满足最低研究包（见 `protocols/02-deep-reading-and-research.md`）。
 
 ---
 
@@ -237,6 +278,9 @@ Task.md 不只是“散点清单”，它是 Plan.md 的可执行拆解，必须
 
 要求：
 - 对照 `templates/Plan.template.md` 的 `Ready-to-Execute Gate` 逐项自检
+- （建议强制）运行自检脚本，避免“看起来写全了但门禁漏项”：
+  - `python AgentSkill/scripts/validate_plan_task_quality.py --plan <Plan.md> --task <Task.md>`
+  - （可选）`python AgentSkill/scripts/scan_forbidden_phrases.py --root AgentSkill/`
 - 任一关键项缺失：继续停留 Plan Mode 补齐，不要请求执行授权
 - Plan/Task 中不得残留明显占位符（例如 `<...>`、`TODO`、`path/to/file` 等）；若需要占位，必须标注为阻塞点并写清“最小输入”
 - 对于 L3：必须能在 Plan/State 中指向以下入口（路径或段落锚点）：
@@ -266,8 +310,13 @@ Task.md 不只是“散点清单”，它是 Plan.md 的可执行拆解，必须
 
 ## library 索引（按触发条件查）
 
+- 深计划质量标准（反敷衍门禁）：`library/plan-quality-standard.md`
+- Task 拆分标准（节奏与可验证性平衡）：`library/task-decomposition-standard.md`
 - 需求/验收/验收契约：`library/requirements-acceptance.md`
 - 大任务治理（里程碑/依赖/变更控制）：`library/project-governance.md`
 - 验证矩阵与证据门禁：`library/testing-verification.md`
+- 调研与证据标准（来源/Impact/证据链）：`library/research-and-evidence-standard.md`
 - 开发范式协同（Software：SDD/Characterization/Spike/BDD...）：`library/development-paradigms.md`
 - 复现协议：`library/reproducibility.md`
+- 格式外科/保结构改写（阶段→技术→验证）：`library/format-surgery-systems.md`
+- PDF 保排版翻译/功能保持 playbook：`library/pdf-layout-translation-playbook.md`

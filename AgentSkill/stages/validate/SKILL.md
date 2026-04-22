@@ -38,8 +38,20 @@ description: 证据门禁：把“应该没问题”变成可复现/可观察的
 
 ---
 
+## 必读协议（L2/L3 强制加载）
+
+- 真实数据优先与分层验证节奏：`protocols/04-validation-real-data-first.md`
+- 门禁状态机：`protocols/00-hard-gates.md`（G7/G8）
+
+常用模板：
+- `templates/ValidationMatrix.template.md`（L3 强制）
+- `templates/TestReport.template.md`（可选：当验证步骤多、证据多时单独落盘）
+
+---
+
 ## library 索引（按触发条件查）
 
+- 真实数据优先验证清单：`library/validation-real-data-first.md`
 - 测试策略与证据门禁：`library/testing-verification.md`
 - 复现协议：`library/reproducibility.md`
 - 风险与安全（验证缺失时的提示与决策）：`library/risk-security.md`

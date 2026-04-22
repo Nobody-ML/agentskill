@@ -1,6 +1,10 @@
 # Review（示例输出）— research-idea-review
 
-> 注意：本文件为演练包节选，仅用于展示工件格式与证据链，不是执行规范；实际任务必须以本 skill 的 `SKILL.md` 与对应阶段的 `stages/*/SKILL.md` 为准。示例内容可改写、扩展或替换。
+> 重要说明：本示例仅用于展示结构，不代表实际输出的最低详细程度。  
+> 实际输出必须依据当前任务的 Level、用户需求、Skill 规则、Plan Quality Gate、Validation Matrix 和 Acceptance Contract 生成。  
+> 大型任务不得因为示例简短而简化 Plan、Task、验证或交付。  
+> 示例字段可以扩展，不得擅自删除与用户需求相关字段。  
+> 示例不是推荐的最终篇幅。L2/L3 任务应显著长于示例，并包含具体资料、证据、架构、任务、验证和恢复信息。
 
 【Review】总分: 5.4/10 | 结论: BLOCKED
 

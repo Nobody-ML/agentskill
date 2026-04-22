@@ -39,8 +39,21 @@ description: 评审与打分：按 Track 选择评分表，绑定证据给出分
 
 ---
 
+## 必读协议（L2/L3 强制加载）
+
+- 交付与评审协议：`protocols/06-delivery-and-review.md`
+- 门禁状态机：`protocols/00-hard-gates.md`（G8）
+
+常用模板：
+- 交付回执：`templates/DeliveryReport.template.md`
+- 评分表：`templates/ReviewRubric-*.template.md`
+- 评审报告（可选）：`templates/ReviewReport.template.md`
+
+---
+
 ## library 索引（按触发条件查）
 
+- 深计划质量标准（用于判定“Plan/Task 是否敷衍”）：`library/plan-quality-standard.md`
 - 验收标准/验收契约：`library/requirements-acceptance.md`
 - 测试与证据门禁：`library/testing-verification.md`
 - 大任务治理（返工与变更控制）：`library/project-governance.md`

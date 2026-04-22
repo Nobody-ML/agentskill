@@ -1,10 +1,13 @@
+> 重要说明：本模板仅用于展示结构，不代表实际输出的最低详细程度。  
+> 实际输出必须依据当前任务的 Level、用户需求、Skill 规则、Plan Quality Gate、Validation Matrix 和 Acceptance Contract 生成。  
+> 大型任务不得因为模板简短而简化 Plan、Task、验证或交付。  
+> 字段可以扩展，不得擅自删除与用户需求相关字段。
+
 # ADR（Architecture Decision Record）模板
 
-> 注意：本模板仅提供参考结构，不是执行规范；实际输出必须遵循本 skill 的 `SKILL.md` 与对应阶段的 `stages/*/SKILL.md`。模板与规则冲突时，以规则为准。
->
-> 用途：把架构/选型/关键取舍显式化，避免“隐形架构”与口头决策丢失。
->
-> 备注：如果你不想单独建 ADR 文件，也可以把同样结构写进 `State.md` 的 Decision Log。
+用途：把架构/选型/关键取舍显式化，避免“隐形架构”与口头决策丢失。
+
+备注：不单独建 ADR 文件时，可把同样结构写进 `State.md` 的 Decision Log。
 
 ---
 

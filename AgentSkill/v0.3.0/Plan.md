@@ -1,231 +1,438 @@
-# AgentSkill v0.3.0 — Plan Mode 强化 + 多范式协同 + 真数据优先验证 + Ops 能力（规划）
+# Plan：AgentSkill v0.3.0 Hardening（Plan-Locked + Evidence-Driven + Long-Run）
 
-版本：`v0.3.0`  
-位置：`droid_gpt-5.2-xhigh_codex_gpt-5.2-xhigh/AgentSkill/`  
-语言：简体中文（术语保留英文）
-
----
-
-## 1. 现状与缺口（v0.2.0 仍不满足的点）
-
-对照你的 0.3.0 诉求，v0.2.0 的主要缺口集中在“**大任务的交互式对齐**”与“**执行/验证的强门禁**”两条主线上：
-
-1) **Plan Mode 不够硬**
-   - v0.2.0 有 Plan/Task 与阶段契约，但“Plan 写完就可能直接 Execute”的门禁仍然偏软。
-   - 你要求：面对大任务（工程/科研）必须先充分理解（读材料/读代码/高质量检索/深度交互），在用户**单独回复**授权口令 `开始执行` 之前不能进入真实执行。
-
-2) **交互方式仍可能发散**
-   - v0.2.0 的 Brainstorm/Router 允许用“多选题”快速收敛，但没有把“提问强约束”写得足够硬：需要避免无休止让用户做选择的句式与分叉。
-
-3) **开发范式存在“单点绑定”风险**
-   - v0.2.0 在 Execute 更偏向把“测试先行/最小回归”作为默认路径，但你明确指出：只依赖一种范式危险且不准确。
-   - 需要把“规范驱动、行为锁定、验收先行、原型验证、契约先行、可观测性排障”等放回工具箱，并给出多范式协同的选择依据（greenfield / legacy / research prototype / ops/debug）。
-
-4) **验证缺少“真数据优先”的硬规则**
-   - v0.2.0 Validate 强调证据门禁，但没有把“真实数据优先、无则用户确认后才模拟”写成硬门禁与决策树。
-   - 你要求：测试不仅是正确性，还必须覆盖规范、性能、可读性等（至少作为验证/评审输入）。
-
-5) **Ops/Debug/Monitoring 不是一等公民**
-   - v0.2.0 的 Operations/maintenance 在 library 有提及，但没有把“替用户跑 debug/训练监控/长任务运行”写成可执行的工件协议与流程（Runbook、观察点、告警阈值、日志证据）。
-
-6) **交付回执格式未统一为“可复查的交付报告”**
-   - Review 有简洁输出格式，但你希望完成任务后要明确“做了什么”、输出格式固定、信息足够可复查，并且开发过程中配套文档必须非常详细。
-
-7) **路径与边界引用存在不一致**
-   - 部分 Plan/Task/State 仍引用旧输出路径（与当前输出目录不一致），导致跳转与引用混乱。
-   - v0.3.0 统一为本目录路径，并把边界约束落到全局硬约束与 State 的 Memory。
-
-8) **上下文压缩后可能“停机”**
-   - 任务进行中出现“交接摘要/压缩总结”之类请求时，智能体容易把摘要当作收尾，导致未完成任务无法继续推进。
-   - 需要把“摘要不是结束”写成协议：摘要必须带可续跑指针（Resumption Block），并默认继续推进未完成 Task（遵守执行授权门禁）。
+Version: v0.3.0  
+Track: Software  
+WorkType: Build  
+Level: L3  
+Current Mode: Plan  
+Execution Authorization: not_required  
+Last Updated: 2026-04-20  
 
 ---
 
-## 2. v0.3.0 目标（你要的能力，写成可验收目标）
+## 0. Template Notice
 
-本版本目标是把 v0.2.0 的“作战手册”升级为可控的两相系统：
-
-### 2.1 两相系统：Plan Mode → Execution Mode
-
-**Plan Mode（对齐阶段）**
-- L2/L3 大任务强制进入 Plan Mode：深读材料/代码 + 高质量检索 + 少而关键的交互提问。
-- 在 Plan Mode 内只允许做三类动作：
-  1) 阅读/整理材料（含仓库代码与用户文档）
-  2) Research（必要时联网检索，来源可追溯）
-  3) 产出/更新规划工件（Plan/Task/必要模板）
-- **硬门禁**：用户未**单独回复**授权口令 `开始执行` 前，不得进入 Execute（不得修改目标代码、不得跑破坏性命令、不得进入长时间训练/监控）。
-
-**Execution Mode（执行阶段）**
-- 一旦用户授权执行：按 Task 列表持续推进，直到把 Plan/Task 中约定的内容完整跑完（除非阻塞或用户中断提出新需求）。
-- 执行过程中持续落盘证据与进度（State），验证不通过必须回溯返工并复评。
-
-### 2.2 多范式协同（从“唯一正确”变成“选择依据清晰”）
-
-- 形成“开发范式工具箱”，并在 Execute/Plan 中给出选择规则：
-  - SDD（Spec-Driven：先把需求写成可执行规范，再实现）
-  - Characterization tests（接手/遗留代码先锁行为再改）
-  - BDD（验收断言驱动，面向用户行为）
-  - Prototype-first / Spike（科研与高不确定任务，先做最小验证）
-  - Contract/Interface-first（边界清晰、多人协作/可替换实现）
-  - Observability-driven debugging（先补可观测性，再定位问题）
-
-### 2.3 验证策略升级：真数据优先 + 全维度质量验证
-
-- Validate 引入硬规则：**真实数据优先**。
-- 真数据不可得时：必须先向用户确认“确实没有可用真实数据/样本/日志”，才允许进入模拟数据验证，并在证据中明确标注“模拟”。
-- 验证的覆盖面升级：
-  - Correctness（对照验收标准）
-  - Engineering compliance（开发规范/一致性/错误信息/边界）
-  - Performance / resource（至少 smoke check，必要时基准）
-  - Readability / maintainability（至少作为 Review 的评分输入）
-
-### 2.4 Ops 能力：替用户跑、替用户盯、替用户排障
-
-把“运行与诊断”写成工件协议与闭环：
-- 明确 Runbook（启动/停止/参数/健康检查/常见失败模式）
-- 明确观察点（logs/metrics/关键产物文件）
-- 明确阈值与告警条件（例如训练 loss 不下降、OOM、性能退化）
-- 明确证据落盘格式（State Evidence Index）
-
-### 2.5 文档必须配套（工程交付的可读性保障）
-
-- 对 Software/Research 交付也强制配套文档（按规模增减）：
-  - 变更说明（What/Why/How）
-  - 运行说明（Runbook）
-  - 验证说明（命令/数据/结果摘要）
+本 Plan 是该版本改造的控制文档，用于把 v0.3.0 的硬化目标落成可执行工件：协议层（protocols）、深模板（templates）、自检脚本（scripts）、阶段挂接（stages）与可追溯索引（library/traceability）。
 
 ---
 
-## 3. 范围（Scope）
+## 1. User Intent Lock
 
-### 3.1 必做（v0.3.0 必须落盘）
-
-1) **引入“执行授权门禁”**
-   - 新增全局概念：`Execution Authorization`（执行授权）
-   - 默认：L2/L3 = 未授权（Plan Mode）
-   - 授权后：进入 Execution Mode，并把授权记录落盘（Plan + State）
-
-2) **更新 Router / Plan / Execute：写清 Plan Mode 的交互规则**
-   - 明确：大任务必须先读材料/检索/交互对齐
-   - 明确：提问必须少而关键，不得发散；每轮提问必须推动 Plan 收敛
-
-3) **更新 Execute：多范式协同**
-   - 把“单一默认路径”改为“优先规范驱动（Spec）+ 按场景选范式组合”
-   - 给出选择表：新功能/修 bug/遗留系统/科研 spike/ops debug
-
-4) **更新 Validate：真数据优先决策树**
-   - 真数据来源顺序（用户提供 > 仓库样本 > 可采集日志 > 公开数据）
-   - 无真数据必须用户确认后才能模拟
-   - 证据中标注数据类型：real / sanitized-real / synthetic
-
-5) **引入 Ops/Monitoring 工件与检查表**
-   - 新增模板（至少一个）与 library 检查表
-   - 在 Plan/Execute/Validate/Review 挂接触发条件
-
-6) **统一交付回执格式**
-   - 定义“交付报告（Delivery Report）”输出格式，覆盖：做了什么、改了哪些文件、如何验证、证据入口、风险与限制
-
-7) **修正路径/禁区引用**
-   - 全部文档统一为本目录路径（不再引用禁区目录）
-   - 全局硬约束补齐禁区与输出位置
-
-8) **上下文压缩/交接摘要续跑协议**
-   - 摘要不是结束点：摘要输出必须携带 Resumption Block（任务组/检查点/Next Action/阻塞点/未完成项入口）
-   - 默认摘要后继续推进未完成 Task（遵守执行授权门禁与 Plan/Task 契约）
-
-### 3.2 不做（防止无限膨胀）
-
-- 不把每个学科（CUDA/物理/语言学）写成手册：仍以“研究/验证/复现/工程治理”通用框架为主。
-- 不引入复杂自动化脚手架：仍以 Markdown 工件协议为核心，必要时只补最小脚本/命令范式。
+```yaml
+primary_goal: "把 improvement/doc1.md 与 improvement/doc2.md 的思想合并进 AgentSkill，并形成可长期运行的 v0.3.0 硬化层"
+secondary_goals:
+  - "Plan Mode 多轮对齐，无授权不执行"
+  - "真实数据优先验证 + 证据门禁"
+  - "上下文压缩后可恢复，不因摘要停机"
+  - "执行期禁止擅自兜底/降级"
+must_preserve:
+  - "渐进式披露：Router 决定唯一下一阶段"
+  - "State/Plan/Task 作为可续跑契约"
+  - "禁区不可访问 + 输出目录固定"
+must_avoid:
+  - "未授权执行与越权改动"
+  - "忽视 Plan/Task/State 导致漂移"
+  - "在可获得真实数据时用 synthetic 得出通过结论"
+  - "执行期私自加入兜底/降级"
+non_goals:
+  - "重写仓库中其它 skill 目录"
+  - "把所有学科知识写成百科手册"
+quality_bar: "规则可执行、可落盘、可复查、可续跑；门禁不通过能停线回溯"
+style_preferences: "中文、无机械口吻、图示充分、输出结构清晰"
+scope_boundary: "仅修改 droid_gpt-5.2-xhigh_codex_gpt-5.2-xhigh/AgentSkill/**"
+latest_user_feedback: "模板与示例仅供参考；执行期不得擅自兜底；真实数据优先；Plan/Task 必须非常详细；长程防漂移与可恢复"
+```
 
 ---
 
-## 4. 交付物（Deliverables）
+## 2. Problem Frame
 
-### 4.1 核心文件更新（必改）
+### 2.1 一句话目标
 
-- `AgentSkill/SKILL.md`：补齐 Plan Mode/Execution Mode 双相门禁 + 总览图更新
-- `AgentSkill/State.md`：补齐执行授权记录字段、路径修正、v0.3.0 决策落盘
-- `AgentSkill/stages/router/SKILL.md`：路由输出增加“是否需要执行授权确认”
-- `AgentSkill/stages/plan/SKILL.md`：Plan Mode 交互规则 + 执行授权 gate
-- `AgentSkill/stages/execute/SKILL.md`：多范式协同 + 一次性执行约束 + Ops 运行规则
-- `AgentSkill/stages/validate/SKILL.md`：真数据优先 + 数据类型标注 + 性能/规范验证挂点
-- `AgentSkill/stages/review/SKILL.md`：交付报告格式 + 返工规则更硬（验证失败必回溯重写/复评）
+把 v0.2.0 的“写在纸上的流程”升级为 v0.3.0 的“可执行状态机”：Plan 硬锁、证据门禁、长程抗漂移、可恢复、可复盘。
 
-### 4.2 模板更新/新增（建议）
+### 2.2 背景
 
-- 更新：`AgentSkill/templates/Plan.template.md`（增加执行授权段落、真数据声明、Ops/Runbook 段落）
-- 更新：`AgentSkill/templates/Task.template.md`（增加执行授权任务、真数据验证任务、文档配套任务）
-- 更新：`AgentSkill/templates/State.template.md`（增加 Execution Authorization、Ops 运行信息索引）
-- 新增：`AgentSkill/templates/DeliveryReport.template.md`（统一交付回执）
-- 新增（可选但建议）：`AgentSkill/templates/Ops-Runbook.template.md`（运行/监控/排障说明）
+用户反馈暴露出真实失控模式：Plan 只坚持一轮就进入执行、执行中无视 Plan/Task、真实数据门禁被绕过、上下文压缩后停机、模板/示例过简带偏。
 
-### 4.3 library 加厚（新增主题清单）
+### 2.3 成功后的状态
 
-- 新增：`library/plan-mode-interaction.md`（少而关键的交互、问题收敛、避免发散）
-- 新增：`library/development-paradigms.md`（多范式协同：选择表与适用条件）
-- 更新：`library/testing-verification.md`（真数据优先 + 数据类型标注 + 性能/规范验证）
-- 更新/新增：`library/quality-operations-maintenance.md`（扩展“监控/排障/长任务运行”的检查项）
+- L2/L3 大任务必然先进入 Plan Mode，并通过门禁后才允许请求执行授权。
+- 执行批次有 Preflight；验证按 micro-check/checkpoint/milestone/final 分层推进并落证据。
+- 出现漂移信号能停线回溯；上下文压缩后能从 Resumption Block 恢复继续。
 
-### 4.4 图示（补齐 v0.3.0 差异点）
+### 2.4 当前风险
 
-- 更新现有主流程图：增加 “Execution Authorization Gate（用户确认后才 Execute）”
-- 新增 1 张图：Plan Mode ↔ Execution Mode 的门禁与回路（包含阻塞/返工路径）
-- 新增 1 张图：Ops/Monitoring 闭环（Observe → Diagnose → Mitigate → Verify → Record）
+- 规则与模板过多时易出现重复与不一致，需要 protocols 作为硬约束中心，并用 traceability 做追溯。
 
 ---
 
-## 5. 验收标准（Definition of Done）
+## 3. Current State / Gap Analysis
 
-1) **Plan Mode 门禁可执行**
-   - [ ] 文档明确：L2/L3 默认停在 Plan Mode，必须等待用户单独回复授权口令 `开始执行`
-   - [ ] 授权记录有落盘位置（Plan/State），可追溯时间与范围
+已存在基础能力（v0.2.0 与早期 v0.3.0 草案）：
+- Track×Level 路由（router）
+- Plan/Execute/Validate/Review/Write 分阶段
+- State 记忆落盘
+- 真实数据优先原则（已有，但需强化为协议门禁）
 
-2) **多范式协同明确且可落盘**
-   - [ ] Execute 不再单点绑定单一范式；提供选择依据表与最小操作步骤
-
-3) **真数据优先验证变成硬规则**
-   - [ ] Validate 有决策树：优先真数据；无则用户确认后才模拟
-   - [ ] 证据中明确标注数据类型（real/sanitized-real/synthetic）
-
-4) **Ops/Monitoring 成为一等公民**
-   - [ ] 至少 1 个 Runbook/Monitoring 模板或等价工件
-   - [ ] Plan/Execute/Validate/Review 里有触发条件与落盘方式
-
-5) **交付报告格式统一**
-   - [ ] Review/交付阶段输出能稳定复查：做了什么、怎么验证、证据入口在哪里
-
-6) **路径与边界一致**
-   - [ ] 全部文档引用统一为本目录（不再出现禁区目录路径）
-
-7) **上下文压缩可续跑**
-   - [ ] 文档明确：交接摘要/压缩总结属于维护动作，不是任务完成
-   - [ ] 摘要输出包含 Resumption Block（任务组/检查点/Next Action/阻塞点/未完成项入口），摘要后默认继续推进未完成任务（遵守执行授权门禁）
+差距（本版本必须补齐）：
+- 缺少“协议层（protocols）+ 门禁状态机（G0–G9）”的中心化定义
+- 缺少 L3 深模板与门禁自检模板（Plan/Task/Matrix/Preflight/Resumption）
+- 缺少自检脚本（禁止短语、Plan/Task 质量、State 最小字段）
+- templates/examples 顶部免责声明不统一，易被当成实际输出下限
+- 长任务运行（Ops/训练监控）需要协议化与 Runbook 绑定
 
 ---
 
-## 6. 实施步骤（Milestones）
+## 4. Inputs and Materials Read
 
-1) 写清并落盘“执行授权门禁”（SKILL + Router + Plan + templates）
-2) Execute 改为多范式协同（Execute + library）
-3) Validate 真数据优先 + 全维度验证（Validate + library + templates）
-4) Ops/Monitoring 工件与闭环（templates + library + diagrams）
-5) 统一交付报告格式（Review + templates）
-6) 路径修正 + v0.3.0 自检（对照 DoD 补齐缺口）
-7) 上下文压缩/交接摘要续跑协议补齐（SKILL + library + templates + State）
+本次合并依据（本地材料）：
+- droid_gpt-5.2-xhigh_codex_gpt-5.2-xhigh/AgentSkill/improvement/doc1.md
+- droid_gpt-5.2-xhigh_codex_gpt-5.2-xhigh/AgentSkill/improvement/doc2.md
+- droid_gpt-5.2-xhigh_codex_gpt-5.2-xhigh/AgentSkill/improvement/plan-comparison.md
+- droid_gpt-5.2-xhigh_codex_gpt-5.2-xhigh/AgentSkill/improvement/plan-comparison_2.md
+
+现有基线与已改造文件（节选）：
+- droid_gpt-5.2-xhigh_codex_gpt-5.2-xhigh/AgentSkill/SKILL.md
+- droid_gpt-5.2-xhigh_codex_gpt-5.2-xhigh/AgentSkill/State.md
+- droid_gpt-5.2-xhigh_codex_gpt-5.2-xhigh/AgentSkill/stages/*
+- droid_gpt-5.2-xhigh_codex_gpt-5.2-xhigh/AgentSkill/templates/*
+- droid_gpt-5.2-xhigh_codex_gpt-5.2-xhigh/AgentSkill/library/*
+- droid_gpt-5.2-xhigh_codex_gpt-5.2-xhigh/AgentSkill/examples/*
 
 ---
 
-## 7. 已决策事项（本版本默认锁定）
+## 5. Research Log
 
-1) **执行授权口令/判定**
-   - 规则：L2/L3 默认不执行；为避免误判，仅当用户**单独回复**授权口令 `开始执行`（建议独立消息或独立一行）才进入 Execution Mode。
-   - 边界：不接受任何“同义句/近义句/上下文推断”的授权（例如“确认/继续/好的/收到”等均不视为授权）。
+本任务以“本地工件合并与工程化落盘”为主，但 v0.3.0 的 L3 标准要求：关键约束与关键设计决策必须能指向可追溯来源。因此这里给出一个最小研究包，用于支撑：
+- 渐进式披露的目录组织（主入口导航化、细则下沉）
+- 需求工程/验收/可追溯性/质量模型的写法
+- Markdown 工件（Task checklist/表格/图示）作为长期契约的可读性与可维护性
 
-2) **“真实数据”的定义边界**
-   - 建议定义：真实数据 = 来自真实系统/真实用户/真实数据源的样本（可脱敏）；合成数据 = 为测试临时编造/随机生成。
-   - 规则：在 Software 任务中，“脱敏日志/真实请求样本”归类为 `sanitized-real`，属于真实数据验证范畴；`synthetic` 仅在用户明确确认“无可用真实样本（含脱敏样本）”且 Plan/State 已落盘时允许使用。
+| Query | Source (link) | Source type | Extracted facts | Impact on plan | Open questions |
+|---|---|---|---|---|---|
+| progressive disclosure pattern | https://www.nngroup.com/articles/progressive-disclosure/ | official | 渐进式披露用于在不压垮读者的前提下分阶段呈现复杂信息；先给最少必要信息，再按需展开 | 支撑“主 SKILL 只做入口导航、细则放到 protocols/stages/library”的组织方式 | 如何把披露层级与门禁状态机绑定得更显式 |
+| GFM task list items | https://github.github.com/gfm/#task-list-items-extension- | official | Markdown 任务列表有明确语法与渲染规则，可作为可勾选执行清单 | Task.md 采用方框清单作为最小执行单元，且可长期维护 | 不同渲染器对 task list 的兼容性差异是否需要额外约束 |
+| GitHub Flavored Markdown spec | https://github.github.com/gfm/ | official | GFM 定义了表格、代码块、任务列表等扩展；适合用作“工件协议”承载结构化信息 | 允许 Plan/Task/State 使用表格承载规格/验证矩阵/证据索引 | Mermaid 与 GFM 的组合在不同平台的支持范围 |
+| Mermaid flowchart syntax | https://mermaid.js.org/syntax/flowchart.html | official | Flowchart/graph 语法可用于表达状态机与端到端链路；适合工程化文档 | 主 SKILL 与各 stage 用 Mermaid 作为默认图示语言（流程、门禁、恢复） | PlantUML 何时更合适（类图/时序图）需要在库中补充判断准则 |
+| JSON Schema overview | https://json-schema.org/ | official | JSON Schema 可用于约束结构化输出/中间工件，支撑“可校验、可恢复、可续跑” | 支撑结构化工件（Validation Matrix / report / cache）的 schema 约束思路 | 是否需要为关键工件提供最小 schema 示例与校验脚本 |
+| 12-factor app (ops discipline) | https://12factor.net/ | official | 强调配置/日志/可观测性/可部署性等原则，利于长期运行与可恢复 | 支撑 Ops/Debug/长任务运行协议中“可观测性优先、Runbook 落盘”的要求 | 对离线/本地工程的适配写法是否需要补充 |
+| Google SRE books | https://sre.google/books/ | official | SRE 强调可观测性、错误预算、恢复流程、事后复盘；长任务要可运行可恢复 | 支撑 `protocols/08-long-running-ops.md` 与 Evidence/Resumption 的设计动机 | 如何把 SRE 的事故复盘结构映射进 Review/Delivery 模板 |
+| ISO/IEC/IEEE 29148 requirements engineering | https://www.iso.org/standard/72089.html | standard | 需求工程强调需求信息项、可追溯性、验证与确认等过程要素 | 支撑“Plan=规格、验收契约、验证矩阵、追溯表”的结构化要求 | 是否需要引入更多标准条目（质量模型/风险管理）作为扩展 playbook |
+| ISO/IEC 25010 quality model | https://www.iso.org/standard/35733.html | standard | 质量模型覆盖功能适合性、性能效率、兼容性、可用性、可靠性、安全性、可维护性、可移植性 | 支撑 Validation 维度与 Review 打分维度的覆盖面 | 如何把质量属性目标写成可验证断言并映射到证据 |
 
-3) **Ops/Monitoring 的定位**
-   - 建议：不新增 Track，仍归入 Software，但新增字段 `WorkType = Build | Debug | Ops`（写入 Router 回执与 State/Plan）。
-   - 规则：采用 `WorkType` 作为次级分类，避免扩展 Track 导致分流复杂与文档膨胀。
+---
+
+## 6. Requirements
+
+### 6.1 Functional Requirements
+
+- FR-001：新增协议层 protocols，集中定义硬门禁与状态机
+- FR-002：Plan Mode 硬锁 + Deep Plan 标准可复用
+- FR-003：执行预检 Preflight 模板化并挂接到 Execute
+- FR-004：真实数据优先验证协议化 + 分层验证节奏
+- FR-005：Resumption Block 与 Drift Recovery 协议化，解决上下文压缩与长期漂移
+- FR-006：边界/兜底/降级必须协议化：Plan 内登记并确认，执行期禁止擅自新增
+- FR-007：交付与评审固定格式（Delivery Report），并把过程合规变成硬门禁
+- FR-008：自检脚本：禁止短语扫描、Plan/Task 质量门禁、State 最小字段校验
+
+### 6.2 Non-functional Requirements
+
+- NFR-001：渐进式披露：主 SKILL 导航化，细则在 protocols/stages/library
+- NFR-002：可追溯：需求条目能映射到协议/模板/阶段（traceability）
+- NFR-003：可维护：避免重复粘贴导致不一致（以 protocols 为硬规则中心）
+- NFR-004：可续跑：State 作为单一真相，支持压缩后恢复
+
+### 6.3 Documentation Requirements
+
+- DR-001：templates 与 examples 顶部免责声明统一
+- DR-002：主 SKILL 中提供协议加载地图（按阶段加载协议）
+- DR-003：新增协议必须有清晰标题、适用范围、门禁关联
+
+### 6.4 Operations / Monitoring Requirements
+
+- OR-001：长任务运行/训练监控必须落盘 Runbook 与证据入口
+- OR-002：Ops/Debug 工作形态在协议层可引用
+
+---
+
+## 7. Non-goals
+
+- 不把整个仓库所有 skill 统一到同一套目录；本版本仅完善本输出目录内的 AgentSkill
+- 不引入复杂脚手架或强依赖构建系统；以 Markdown 工件协议为主，脚本只做最小自检
+
+---
+
+## 8. Constraints and Boundaries
+
+### 8.1 Allowed
+
+- 允许修改范围：droid_gpt-5.2-xhigh_codex_gpt-5.2-xhigh/AgentSkill/**
+
+### 8.2 Forbidden
+
+- 禁止访问：codex_gpt-5.2-xhigh/**
+- 禁止访问：codex_gpt-5.4-xhigh/AgentSkill/**
+- 禁止访问：droid_gpt-5.2-xhigh/AgentSkill/**
+
+### 8.3 Files / Areas Allowed to Modify
+
+- 仅本目录下 protocols/templates/scripts/stages/library/examples/State/SKILL 与版本文件
+
+### 8.4 Files / Areas Forbidden to Access or Modify
+
+- 上述禁区目录与其子目录
+
+### 8.5 Fallback Policy
+
+- 默认禁止兜底/降级
+- 需要兜底必须在 Plan 阶段登记（Fallback Register）并获得确认
+- 执行阶段遇到不可实现项必须停线回到 Plan
+
+---
+
+## 9. Candidate Solutions
+
+### Option A：Minimal patch
+
+只在现有 stages/templates 中补文字约束。
+
+缺点：
+- 规则分散，长期运行易漂移
+- 缺少自检与恢复结构，无法抵抗上下文压缩
+
+### Option B：Recommended（协议层 + 深模板 + 自检脚本）
+
+新增 protocols、深模板与脚本，把“建议”升级为“门禁状态机”，并让 stages 引用协议。
+
+### Option C：Long-term / Advanced
+
+在 Option B 基础上增加更强的自动化检查与更细的版本化治理（本版本不做）。
+
+---
+
+## 10. Architecture Decision
+
+采用 Option B：
+- 新增 protocols 作为硬规则中心
+- 新增深模板与门禁模板
+- 新增 scripts 自检
+- 更新 stages 与主 SKILL 导航，完成引用挂接
+
+---
+
+## 11. Technical Chain / Method Chain
+
+端到端状态机（示意）：
+
+```mermaid
+flowchart TD
+  Boot[G0 Boot] --> Route[Router]
+  Route --> PM[Plan Mode]
+  PM --> G4[G4 Plan Quality]
+  G4 --> Auth{ExecutionAuth=received?}
+  Auth -->|No| PM
+  Auth -->|Yes| EX[Execute]
+  EX --> G6[G6 Preflight]
+  G6 --> V[Validate]
+  V --> R[Review/Delivery]
+  R -->|Feedback| PM
+  R -->|Done| State[State Updated]
+```
+
+---
+
+## 11.1 Pipeline Stages（阶段→技术→验证映射）
+
+> 本 Plan 面向“Skill 硬化工程”本身。为避免“流程/技术栈敷衍”，仍按外科系统的要求写出阶段映射，确保每一段工作都有工件、有门禁、有证据。
+
+| Stage | Goal | Inputs → Outputs | Candidate tech | Recommended tech | Key risks | Validation & evidence |
+|---|---|---|---|---|---|---|
+| Boot | 重锚定与边界锁定 | State/Plan/Task → 本轮 Next Action | State.md / Decision Log | State.md 为 SSOT | 漂移/越权 | State Next Action 可定位 |
+| Gap analysis | 找到真实失控点 | 反馈/对比 → Gap 清单 | Read Log / 对比文件 | 写入 Plan Gap Analysis | 只写“建议”不落盘 | Plan 明确差距与门禁 |
+| Protocols | 硬门禁集中化 | doc1/doc2 → protocols/*.md | 分散写在 stages | protocols 作为硬规则中心 | 重复/冲突 | 全局引用一致性抽查 |
+| Templates | 深模板与门禁模板 | protocols → templates/*.md | 轻量模板 | deep + gate templates | 模板带偏/太短 | 顶部免责声明统一 + 占位符清零 |
+| Stage hook-up | stages 引用协议 | protocols/templates → stages/* | 自由发挥 | 必读协议清单 + 关键模板引用 | 漏读导致失控 | stages 断链扫描（rg） |
+| Playbooks/library | 防浅计划与外科任务支持 | plan-comparison_2 → library/* | 仅写概念 | format-surgery + PDF playbook | 技术栈敷衍 | library 索引与 stage 挂接 |
+| Examples | 给“期望密度”样例 | templates + playbooks → examples/* | 简化示例 | 深度 PDF 示例包 | 示例被当下限 | 示例免责声明 + 结构完整性 |
+| Scripts | 自检门禁最小化 | artifacts → scripts/* | 纯人工 | scan + validate_state + validate_plan_task | 漏掉明显违规 | 脚本 PASS 输出 |
+| Milestone validate | 形成可复查证据 | scripts → PASS | 口头声明 | 退出码 + 输出记录 | 无证据 | Evidence Index 更新 |
+| Final review | 固化交付回执 | 变更集合 → Changelog | 无结构总结 | CHANGELOG + State 结论 | 无法交接 | 文档可定位 + 路由可复用 |
+
+---
+
+## 11.2 Workdir & Resume Strategy（断点续跑与恢复）
+
+- workdir layout（本任务）：
+  - `droid_gpt-5.2-xhigh_codex_gpt-5.2-xhigh/AgentSkill/`：主目录与工件
+  - `droid_gpt-5.2-xhigh_codex_gpt-5.2-xhigh/AgentSkill/v0.3.0/Plan.md`：本版本控制文档
+  - `droid_gpt-5.2-xhigh_codex_gpt-5.2-xhigh/AgentSkill/v0.3.0/Task.md`：本版本最小执行单元
+- resume markers：
+  - 以 `State.md` 的 Resumption Block 作为唯一恢复入口（Mode/Level/Auth/Task Group/Next Action）
+  - 每次完成一个 Task Group 的 checkpoint 后，必须更新 State 的 Evidence Index 与 Next Action
+- partial failure policy：
+  - 任一门禁脚本失败 → 视为 blocker；先修复，再继续推进后续任务（不带病进入交付）
+
+---
+
+## 11.3 QA Plan（文档/门禁/引用一致性）
+
+本任务 QA 不是“跑单测”，而是“协议是否可执行、是否抗漂移、是否能产出深 Plan”。
+
+- render/结构 QA：
+  - 主 SKILL 的“协议加载地图”能把读者带到正确的 stages/protocols/library
+  - templates/examples 的免责声明一致且不误导为输出下限
+- 链接/引用 QA：
+  - stages 引用的 protocols/templates 路径存在且无断链（可用 `rg`/脚本抽检）
+- 门禁 QA：
+  - `scripts/scan_forbidden_phrases.py` PASS（排除 improvement 与 diagrams）
+  - `scripts/validate_workflow_state.py` PASS（State 最小字段齐全）
+  - `scripts/validate_plan_task_quality.py` PASS（L3 Plan 必含 Pipeline/QA/Resume/Matrix）
+- 漂移/恢复 QA（抽样人工）：
+  - 从“上下文压缩恢复”视角，用 Resumption Block 能明确下一步动作与边界
+
+---
+
+## 12. Specification
+
+### 12.1 Data Model
+
+- Gate status：pass/blocked/fail/skip（见 protocols/00-hard-gates）
+- Validation data_type：real/sanitized-real/synthetic
+- Validation scope：micro-check/checkpoint/milestone/final
+
+### 12.2 Interfaces
+
+- protocols 为硬约束来源；stages 引用 protocols；templates 为落盘结构；scripts 为自检门禁
+
+### 12.3 State
+
+- State.md 是单一真相来源（SSOT）
+- 每轮必须维护 Next Action 与 Resumption Block
+
+### 12.4 Error Handling
+
+- 门禁不通过必须停线回溯，不允许靠兜底掩盖
+
+### 12.5 Logging / Monitoring
+
+- Ops/训练监控必须有 Runbook 与 Evidence Index 入口
+
+---
+
+## 13. Development / Work Strategy
+
+策略组合：
+- SDD(spec-d-d)：以 Plan/Task/验收/验证矩阵作为规格骨架
+- 协议优先：protocols 定义硬门禁，避免重复粘贴导致漂移
+- 证据门禁：scripts 作为最低自检手段，保证可复查与可续跑
+
+---
+
+## 14. Acceptance Contract
+
+- AC-001：protocols 目录存在，并包含 hard gates、plan mode、validation、resumption、fallback、delivery 等协议文件
+- AC-002：templates 增加 deep Plan/Task 与 Gate/Matrix/Preflight/Resumption/ChangeControl/FallbackRegister 模板
+- AC-003：scripts 存在并可运行：禁止短语扫描、Plan/Task 质量门禁、State 最小字段校验
+- AC-004：stages 与主 SKILL 明确引用 protocols/templates/scripts（协议加载地图可复用）
+- AC-005：templates 与 examples 顶部免责声明统一，不被误当成输出下限
+- AC-006：v0.3.0 的 Plan/Task 通过自检脚本（无占位符、结构门禁满足）
+
+---
+
+## 15. Validation Matrix
+
+| AC | Data | Cadence | Method | Command | Evidence |
+|---|---|---|---|---|---|
+| AC-003 | real | milestone | script | python3 droid_gpt-5.2-xhigh_codex_gpt-5.2-xhigh/AgentSkill/scripts/scan_forbidden_phrases.py | 退出码 + 输出 |
+| AC-003 | real | milestone | script | python3 droid_gpt-5.2-xhigh_codex_gpt-5.2-xhigh/AgentSkill/scripts/validate_workflow_state.py | 退出码 + 输出 |
+| AC-006 | real | milestone | script | python3 droid_gpt-5.2-xhigh_codex_gpt-5.2-xhigh/AgentSkill/scripts/validate_plan_task_quality.py | 退出码 + 输出 |
+
+---
+
+## 16. Real Data Strategy
+
+本任务验证的“真实数据”定义：
+- 以仓库内真实文件为验证对象（protocols/templates/stages/library/examples/State/Plan/Task），通过脚本与全局扫描验证结构与门禁。
+
+---
+
+## 17. Risk Register
+
+| ID | Risk | Impact | Mitigation |
+|---|---|---|---|
+| R-001 | 协议与 stage 内容重复导致不一致 | 漂移、规则冲突 | protocols 做硬规则中心；traceability 定位唯一落点；多处引用同一协议文件 |
+| R-002 | 模板被误当作输出下限 | Plan/Task 变浅、验证变弱 | templates/examples 顶部免责声明统一；review 的 Plan/Task 敷衍门禁阻断 |
+
+---
+
+## 18. Fallback Register
+
+默认空（本任务不需要兜底与降级）。
+
+---
+
+## 19. Documentation Plan
+
+- 更新主 SKILL：目录结构 + 协议加载地图
+- 更新 stages：每阶段增加“必读协议”与关键模板引用
+- 更新 traceability：新增协议/模板/脚本的落点映射
+
+---
+
+## 20. Milestones
+
+- M1：Hard Gates & Protocols（protocols 目录落盘）
+- M2：Deep Plan / Task & Gate Templates（深模板与门禁模板）
+- M3：Execution Hardening（Preflight + fallback/boundaries + ops）
+- M4：Validation Hardening（真实数据优先协议 + 节奏）
+- M5：Long-run Stability（Resumption Block + drift recovery）
+- M6：Templates and Examples Disclaimer Unification（免责声明统一）
+- M7：Review and Delivery（交付与评审协议 + 固定交付格式）
+
+---
+
+## 21. Task Mapping
+
+- M1 → Task Group：Hard Gates
+- M2 → Task Group：Deep Templates
+- M3 → Task Group：Execution Discipline
+- M4 → Task Group：Validation
+- M5 → Task Group：Long-run Anti-drift
+- M6 → Task Group：Templates and Examples
+- M7 → Task Group：Review and Delivery
+
+---
+
+## 22. Ready-to-Execute Gate
+
+本版本改造属于“文档与协议落盘”，执行授权不需要外部输入；进入收尾前必须满足：
+- protocols/templates/scripts/stages 已完成挂接
+- v0.3.0 Plan/Task 不含占位符
+- 自检脚本可运行且通过
+
+---
+
+## 23. Resumption Block
+
+```yaml
+RESUMPTION_BLOCK_v0.3:
+  mode: "Plan"
+  track: "Software"
+  work_type: "Build"
+  level: "L3"
+  execution_auth: "not_required"
+  current_task_group: "v0.3.0-hardening"
+  checkpoint_level: "final"
+  next_actions:
+    - "运行 scripts 自检并把结果写入 State Evidence Index"
+    - "做一次全局 review：traceability 与 stage/protocol 一致性审计"
+  blockers: []
+  last_evidence:
+    - "droid_gpt-5.2-xhigh_codex_gpt-5.2-xhigh/AgentSkill/library/traceability.md"
+  risks:
+    - "协议与阶段文档出现冲突"
+  forbidden:
+    - "no unauthorized execution"
+    - "no unplanned fallback"
+```

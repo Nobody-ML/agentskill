@@ -10,9 +10,9 @@
 - **Track**：Software
 - **WorkType**：Build
 - **Level**：L3
-- **当前阶段**：Review（v0.3.0 收尾：门禁一致性审计 + 长任务续跑协议）
+- **当前阶段**：Review（v0.3.0：PDF 外科加固 + 门禁脚本收尾）
 - **创建时间**：2026-03-19
-- **最后更新**：2026-04-19
+- **最后更新**：2026-04-20
 
 ---
 
@@ -105,6 +105,58 @@
   - M3：L3 治理模板（done）
   - M4：examples 四包（done）
 
+### 3.3 Next Action（可续跑指针）
+
+- 当前 Mode：Review（v0.3.0 已通过自检）
+- 当前任务组：v0.3.0-hardening（协议层 + 深模板 + 自检脚本 + 外科 playbook）
+- 下一步（按顺序）：
+  1) 用新的 `library/pdf-layout-translation-playbook.md` 重新生成一次真实任务的 Plan/Task，对齐 plan-comparison_2 的密度
+  2) 抽样做一轮“上下文压缩恢复演练”：仅凭 State Resumption Block 续跑到下一个 checkpoint
+  3) 扩充下一个深度示例包（优先 GPU/ML/训练监控类 L3）
+
+### 3.4 Resumption Block（上下文压缩恢复）
+
+```yaml
+RESUMPTION_BLOCK_v0.3:
+  mode: "Review"
+  track: "Software"
+  work_type: "Build"
+  level: "L3"
+  execution_auth: "not_required"
+  current_task_group: "v0.3.0-hardening"
+  checkpoint_level: "milestone"
+  next_actions:
+    - "用新的 PDF playbook 生成一次真实任务 Plan/Task（对齐 plan-comparison_2）"
+    - "做一次压缩恢复演练：按 Resumption Block 推进到 checkpoint"
+  blockers: []
+  last_evidence:
+    - "AgentSkill/protocols/*"
+    - "AgentSkill/templates/*deep*"
+    - "AgentSkill/scripts/*"
+  risks:
+    - "协议/模板/阶段文档之间出现重复与不一致"
+  forbidden:
+    - "no unauthorized execution"
+    - "no unplanned fallback"
+```
+
+### 3.5 Gate Summary（最近门禁摘要）
+
+```yaml
+gates:
+  G0: pass
+  G1: pass
+  G2: pass
+  G3: pass
+  G4: pass
+  G5: pass
+  G6: pass
+  G7: pass
+  G8: pass
+  G9: pass
+last_gate_update: 2026-04-20
+```
+
 ---
 
 ## 4. Risks & Assumptions（风险与假设）
@@ -132,3 +184,11 @@
 - `droid_gpt-5.2-xhigh_codex_gpt-5.2-xhigh/AgentSkill/v0.2.0/Task.md`
 - `droid_gpt-5.2-xhigh_codex_gpt-5.2-xhigh/AgentSkill/v0.3.0/Plan.md`
 - `droid_gpt-5.2-xhigh_codex_gpt-5.2-xhigh/AgentSkill/v0.3.0/Task.md`
+- `droid_gpt-5.2-xhigh_codex_gpt-5.2-xhigh/AgentSkill/v0.3.0/DeliveryReport.md`
+
+### 5.2 v0.3.0 自检（命令与结果）
+
+- `python3 droid_gpt-5.2-xhigh_codex_gpt-5.2-xhigh/AgentSkill/scripts/scan_forbidden_phrases.py` → PASS（exit 0）
+- `python3 droid_gpt-5.2-xhigh_codex_gpt-5.2-xhigh/AgentSkill/scripts/validate_workflow_state.py` → PASS（exit 0）
+- `python3 droid_gpt-5.2-xhigh_codex_gpt-5.2-xhigh/AgentSkill/scripts/validate_plan_task_quality.py` → PASS（exit 0）
+- Internal refs check（protocols/templates/library/stages）→ All referenced internal paths exist（exit 0）

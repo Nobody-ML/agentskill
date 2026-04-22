@@ -40,7 +40,9 @@
 - 路由优先级（未授权/Plan 未就绪 → 强制 Plan）：`AgentSkill/stages/router/SKILL.md`
 - Plan Mode 允许/禁止动作：`AgentSkill/stages/plan/SKILL.md`
 - 对齐与提问收敛清单：`AgentSkill/library/plan-mode-interaction.md`
+- 深计划质量标准（反敷衍门禁）：`AgentSkill/library/plan-quality-standard.md`
 - 防敷衍门禁（Read/Research 最低计数、占位符清零、Ready-to-Execute Gate）：`AgentSkill/stages/plan/SKILL.md`、`AgentSkill/templates/Plan.template.md`
+- Plan Mode 深度门禁：`AgentSkill/protocols/00-hard-gates.md`、`AgentSkill/protocols/01-plan-mode-and-deep-plan.md`、`AgentSkill/protocols/02-deep-reading-and-research.md`
 
 ---
 
@@ -81,6 +83,9 @@
 - Plan/Task 最低内容门禁与退出条件：`AgentSkill/stages/plan/SKILL.md`
 - Plan 模板（Read Log / Spec / Validation Data / Cadence / Ready-to-Execute Gate）：`AgentSkill/templates/Plan.template.md`
 - Task 模板（Task Group + Checkpoint/Milestone/Final 验证项）：`AgentSkill/templates/Task.template.md`
+- 深模板（L3）：`AgentSkill/templates/Plan.deep.template.md`、`AgentSkill/templates/Task.deep.template.md`
+- Plan 质量标准（反敷衍）：`AgentSkill/library/plan-quality-standard.md`
+- Task 拆分标准（节奏与可验证性平衡）：`AgentSkill/library/task-decomposition-standard.md`
 - Router 的就绪判定包含“占位符清零”门禁：`AgentSkill/stages/router/SKILL.md`
 
 ---
@@ -108,6 +113,7 @@
 - Validate 的 scope=checkpoint/milestone/final：`AgentSkill/stages/validate/SKILL.md`
 - Task 模板的 Checkpoint/Milestone/Final 条目：`AgentSkill/templates/Task.template.md`
 - Validate 的验证维度（Dimensions）与数据获取尝试：`AgentSkill/stages/validate/SKILL.md`
+- Task 拆分标准（提前验证触发器）：`AgentSkill/library/task-decomposition-standard.md`
 
 ---
 
@@ -131,8 +137,10 @@
 
 落点：
 - Validate 数据门禁与决策树：`AgentSkill/stages/validate/SKILL.md`
+- 真实数据优先协议：`AgentSkill/protocols/04-validation-real-data-first.md`
 - Review 的硬门禁（synthetic 未经确认 → BLOCKED）：`AgentSkill/stages/review/SKILL.md`
 - 验证数据门禁清单：`AgentSkill/library/testing-verification.md`
+- 真实数据优先清单（便于 Plan/Validate 快速引用）：`AgentSkill/library/validation-real-data-first.md`
 - Plan 模板 Validation Data 段落：`AgentSkill/templates/Plan.template.md`
 
 ---
@@ -146,6 +154,7 @@
 - Validate 的范围定义与输出字段：`AgentSkill/stages/validate/SKILL.md`
 - Review 的维度证据与整改清单：`AgentSkill/stages/review/SKILL.md`
 - 质量与运维清单：`AgentSkill/library/quality-operations-maintenance.md`
+- 通用工程作战模型（质量属性与验证维度）：`AgentSkill/library/software-engineering-operating-model.md`
 
 ---
 
@@ -170,6 +179,7 @@
 - Router 的 WorkType 判定：`AgentSkill/stages/router/SKILL.md`
 - Execute 的 WorkType=Ops 建议顺序：`AgentSkill/stages/execute/SKILL.md`
 - 运维/监控清单：`AgentSkill/library/quality-operations-maintenance.md`
+- 长任务续跑与 Ops 作战手册：`AgentSkill/library/long-run-agent-operations.md`
 - Runbook 模板：`AgentSkill/templates/Ops-Runbook.template.md`
 - State 模板的治理索引与 Evidence Index：`AgentSkill/templates/State.template.md`
 
@@ -183,6 +193,7 @@
 落点：
 - Write 阶段约束与流程：`AgentSkill/stages/write/SKILL.md`
 - 写作清单：`AgentSkill/library/documentation-writing.md`
+- 文档质量标准（结构/验证/评分）：`AgentSkill/library/documentation-quality-standard.md`
 - 写作验证（引用/示例可运行）：`AgentSkill/stages/validate/SKILL.md`
 
 ---
@@ -196,6 +207,7 @@
 - Review 阶段强制 Delivery Report：`AgentSkill/stages/review/SKILL.md`
 - 回执模板：`AgentSkill/templates/DeliveryReport.template.md`
 - Delivery Report 的过程合规段落（授权记录入口 + 关键改动→Task 映射）：`AgentSkill/templates/DeliveryReport.template.md`
+- 交付与输出契约协议：`AgentSkill/protocols/06-delivery-and-review.md`、`AgentSkill/protocols/09-output-contracts.md`
 
 ---
 
@@ -229,9 +241,11 @@
 
 落点：
 - 全局硬约束：`AgentSkill/SKILL.md`
+- 长程恢复协议：`AgentSkill/protocols/05-resumption-and-anti-drift.md`
 - Resume Protocol：`AgentSkill/library/iteration-feedback.md`
 - 治理规则：`AgentSkill/library/project-governance.md`
 - Next Action 交接约定：`AgentSkill/templates/State.template.md`
+- Resumption Block 模板：`AgentSkill/templates/ResumptionBlock.template.md`
 - 决策落盘：`AgentSkill/State.md`
 
 ---
@@ -255,3 +269,85 @@
 落点：
 - 全局边界：`AgentSkill/SKILL.md`
 - 长期记忆边界：`AgentSkill/State.md`
+
+---
+
+## RQ-021：硬门禁状态机（G0–G9）必须可执行、可落盘
+
+定义：
+- 大任务必须按门禁推进：Boot/Plan/Task/Preflight/RealData/Evidence/DriftRecovery。
+- 门禁不通过必须停线回溯；不得用“先做再说”绕过。
+
+落点：
+- 门禁协议：`AgentSkill/protocols/00-hard-gates.md`
+- Plan 质量门禁：`AgentSkill/templates/PlanQualityGate.template.md`
+- 执行预检门禁：`AgentSkill/templates/ExecutionPreflight.template.md`
+- Validate 证据门禁：`AgentSkill/stages/validate/SKILL.md`
+- Review 停线门禁：`AgentSkill/stages/review/SKILL.md`
+- State 门禁摘要：`AgentSkill/templates/State.template.md`
+
+---
+
+## RQ-022：执行前预检（Preflight）必须作为硬门禁
+
+定义：
+- 每个执行批次开始前必须确认授权/边界/数据/环境/回滚点/观测点；预检不通过不得执行。
+
+落点：
+- 预检协议：`AgentSkill/protocols/03-execution-preflight.md`
+- 预检模板：`AgentSkill/templates/ExecutionPreflight.template.md`
+- 执行阶段规则：`AgentSkill/stages/execute/SKILL.md`
+
+---
+
+## RQ-023：用户反馈触发变更控制（Change Control）并进入再规划闭环
+
+定义：
+- 用户检验不满意/提出新想法/范围变化时，不在执行期硬改；必须回到 Plan 更新 Plan/Task/验收/验证矩阵，并按需要重新走授权。
+
+落点：
+- 变更控制模板：`AgentSkill/templates/ChangeControl.template.md`
+- 交付与复盘协议：`AgentSkill/protocols/06-delivery-and-review.md`
+- Plan 阶段规则：`AgentSkill/stages/plan/SKILL.md`
+- Review 阶段反馈回路：`AgentSkill/stages/review/SKILL.md`
+
+---
+
+## RQ-024：长任务运行/训练监控/排障必须有 Runbook 与证据
+
+定义：
+- 支持替用户运行、监控与排障：必须有 Runbook、观察点、阈值、Checkpoints、失败分类与恢复步骤，并把证据落盘。
+
+落点：
+- 长任务运行协议：`AgentSkill/protocols/08-long-running-ops.md`
+- Runbook 模板：`AgentSkill/templates/Ops-Runbook.template.md`
+- Router 的 WorkType=Ops/Debug：`AgentSkill/stages/router/SKILL.md`
+- Execute 的 Ops/Debug 建议顺序：`AgentSkill/stages/execute/SKILL.md`
+
+---
+
+## RQ-025：Skill 自检（禁止短语/Plan-Task 质量/State 最小字段）
+
+定义：
+- Skill 需要能自校验：禁止短语扫描、Plan/Task 占位符与结构门禁、State 最小字段存在性。
+
+落点：
+- 自检脚本：`AgentSkill/scripts/scan_forbidden_phrases.py`、`AgentSkill/scripts/validate_plan_task_quality.py`、`AgentSkill/scripts/validate_workflow_state.py`
+- 主 SKILL 加载地图：`AgentSkill/SKILL.md`
+
+---
+
+## RQ-026：外科手术型任务（格式/交互/排版保持）必须写成阶段流水线并显式选型
+
+定义：
+- 这类任务本质是“对象系统改写”，必须在 Plan 中给出阶段流水线，并对每阶段写清：候选技术栈、推荐技术栈、关键风险、验证与证据。
+- 必须包含 QA（渲染/几何/功能/多渲染器）与断点续跑策略；不得只写一句“用某库写回”。
+
+落点：
+- L3 触发与 Research 优先：`AgentSkill/stages/router/SKILL.md`
+- 通用外科 playbook：`AgentSkill/library/format-surgery-systems.md`
+- PDF 专用 playbook：`AgentSkill/library/pdf-layout-translation-playbook.md`
+- Deep Plan 强制项：`AgentSkill/protocols/01-plan-mode-and-deep-plan.md`
+- Research 强制与最低研究包：`AgentSkill/protocols/02-deep-reading-and-research.md`
+- 深模板（Pipeline Stages/QA/Resume/Roadmap/Gotchas）：`AgentSkill/templates/Plan.deep.template.md`
+- Plan Quality Gate（阶段→技术→验证 + QA + 研究包）：`AgentSkill/templates/PlanQualityGate.template.md`
